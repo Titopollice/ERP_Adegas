@@ -1,0 +1,59 @@
+/* src/pages/AccountsReceivable.css */
+.accounts-receivable-container {
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    min-height: 100vh;
+    background-color: #f4f6f9;
+  }
+  
+  .accounts-receivable-header, .accounts-receivable-nav {
+    background-color: #001a33;
+    color: white;
+  }
+  
+  .accounts-receivable-nav {
+    border-bottom: 1px solid #ccc;
+  }
+  
+  .accounts-receivable-main {
+    padding: 1.5rem;
+    background-color: white;
+  }
+  
+  .input-search, .input-detail {
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+    border-radius: 4px;
+  }
+  
+  .btn {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+  }
+  
+  .btn-add {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .btn-back, .btn-save {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .btn-delete {
+    background-color: #dc3545;
+    color: white;
+  }
+  
+  .btn-check {
+    background-color: #ffc107;
+    color: white;
+  }
+  
+  .btn:hover {
+    opacity: 0.8;
+  }
+  

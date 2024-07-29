@@ -1,0 +1,36 @@
+/* src/pages/Home.css */
+.home-container {
+  background-color: #001a33; /* Cor específica para o header */
+
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  }
+  
+  .home-header {
+    background-color: #001a33; /* Cor específica para o header */
+  }
+  
+  .home-nav a {
+    color: white;
+    background-color: #001a33; /* Cor específica para o header */
+
+  }
+  
+  .home-nav a:hover {
+    text-decoration: underline;
+    background-color: #001a33; /* Cor específica para o header */
+
+  }
+  
+  .home-main {
+    /* Estilos específicos para o main */
+    background-color: #001a33; /* Cor específica para o header */
+
+  }
+  
+  .home-footer {
+    background-color: #001a33; /* Cor específica para o header */
+    color: #ffffff;
+    font-size: 0.875rem;
+    margin-top: 3rem;
+  }
+  

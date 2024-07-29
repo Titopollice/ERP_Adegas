@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Estilos de normalização e reset básicos podem ser mantidos aqui. */
+
+/* Se necessário, manter estilos globais essenciais para layout ou tipografia básica. */
+body {
+  margin: 0;
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
+
+/* Remova ou encapsule outros estilos conforme necessário. */

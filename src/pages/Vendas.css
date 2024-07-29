@@ -1,0 +1,87 @@
+src/pages/Sales.css
+.sales-container {
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    min-height: 100vh;
+    background-color: #f4f6f9;
+  }
+  
+  .sales-header, .sales-nav {
+    background-color: #001a33;
+    color: white;
+  }
+  
+  .sales-nav {
+    border-bottom: 1px solid #ccc;
+  }
+  
+  .sales-main {
+    padding: 1.5rem;
+    background-color: white;
+  }
+  
+  .input-search {
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+    border-radius: 4px;
+  }
+  
+  .sales-info-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .sales-info-item {
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+    border-radius: 4px;
+  }
+  
+  .sales-summary {
+    text-align: right;
+  }
+  
+  .sales-table {
+    margin-bottom: 1.5rem;
+  }
+  
+  .btn {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+  }
+  
+  .btn-search {
+    background-color: #007bff;
+    color: rgb(0, 0, 0);
+  }
+  
+  .btn-delete {
+    background-color: #dc3545;
+    color: white;
+  }
+  
+  .btn-discount {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .btn-finalize {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .btn:hover {
+    opacity: 0.8;
+  }
+  
+  .sales-footer {
+    border-top: 1px solid #ccc;
+    padding: 1.5rem;
+    background-color: white;
+    text-align: right;
+  }
+  

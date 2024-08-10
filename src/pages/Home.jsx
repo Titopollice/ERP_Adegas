@@ -1,75 +1,75 @@
-// src/pages/Home.jsx
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FaBox, FaUsers, FaStore,FaUser, FaCartArrowDown, FaDollarSign, FaMoneyBillWave, FaWarehouse, FaFileInvoice, FaFileInvoiceDollar, FaCashRegister } from 'react-icons/fa';
+import { FaBox, FaUsers, FaStore, FaUser, FaCartArrowDown, FaDollarSign, FaMoneyBillWave, FaWarehouse, FaFileInvoice, FaFileInvoiceDollar, FaCashRegister } from 'react-icons/fa';
 import './Home.css';
 
 const Home = () => {
   const [currentSection, setCurrentSection] = useState('cadastros');
 
   const renderIcons = () => {
+    const iconClassName = "flex flex-col items-center space-y-4 hover:text-blue-300 transition duration-300 ease-in-out min-w-[150px]";
+
     switch (currentSection) {
       case 'cadastros':
         return (
           <div className="flex space-x-16">
-            <Link to="/produtos" className="flex flex-col items-center space-y-2">
-              <FaBox className="text-6xl" />
-              <span>Produtos</span>
+            <Link to="/produtos" className={iconClassName}>
+              <FaBox className="text-7xl" />
+              <span className="text-xl">Produtos</span>
             </Link>
-            <Link to="/usuario" className="flex flex-col items-center space-y-2">
-              <FaUsers className="text-6xl" />
-              <span>Usuários</span>
+            <Link to="/usuario" className={iconClassName}>
+              <FaUsers className="text-7xl" />
+              <span className="text-xl">Usuários</span>
             </Link>
-            <Link to="/fornecedor" className="flex flex-col items-center space-y-2">
-              <FaStore className="text-6xl" />
-              <span>Fornecedor</span>
+            <Link to="/fornecedor" className={iconClassName}>
+              <FaStore className="text-7xl" />
+              <span className="text-xl">Fornecedor</span>
             </Link>
-            <Link to="/cliente" className="flex flex-col items-center space-y-2">
-              <FaUser className="text-6xl" />
-              <span>Cliente</span>
+            <Link to="/cliente" className={iconClassName}>
+              <FaUser className="text-7xl" />
+              <span className="text-xl">Cliente</span>
             </Link>
           </div>
         );
       case 'utilitarios':
         return (
           <div className="flex space-x-16">
-            <Link to="/vendas" className="flex flex-col items-center space-y-2">
-              <FaCartArrowDown className="text-6xl" />
-              <span>Venda</span>
+            <Link to="/vendas" className={iconClassName}>
+              <FaCartArrowDown className="text-7xl" />
+              <span className="text-xl">Venda</span>
             </Link>
-            <Link to="/ContasPagar" className="flex flex-col items-center space-y-2">
-              <FaDollarSign className="text-6xl" />
-              <span>Gerar A Pagar</span>
+            <Link to="/ContasPagar" className={iconClassName}>
+              <FaDollarSign className="text-7xl" />
+              <span className="text-xl">Gerar A Pagar</span>
             </Link>
-            <Link to="/ContasReceber" className="flex flex-col items-center space-y-2">
-              <FaMoneyBillWave className="text-6xl" />
-              <span>Gerar A Receber</span>
+            <Link to="/ContasReceber" className={iconClassName}>
+              <FaMoneyBillWave className="text-7xl" />
+              <span className="text-xl">Gerar A Receber</span>
             </Link>
-            <Link to="/estoque" className="flex flex-col items-center space-y-2">
-              <FaWarehouse className="text-6xl" />
-              <span>Entrada de Estoque</span>
+            <Link to="/estoque" className={iconClassName}>
+              <FaWarehouse className="text-7xl" />
+              <span className="text-xl">Entrada de Estoque</span>
             </Link>
           </div>
         );
       case 'relatorios':
-        // Exemplos de ícones para Relatórios
         return (
           <div className="flex space-x-16">
-            <Link to="/relatorioEstoque" className="flex flex-col items-center space-y-2">
-              <FaWarehouse className="text-6xl" />
-              <span>Entrada de Estoque</span>
+            <Link to="/relatorioEstoque" className={iconClassName}>
+              <FaWarehouse className="text-7xl" />
+              <span className="text-xl">Entrada de Estoque</span>
             </Link>
-            <Link to="/relatorioVendas" className="flex flex-col items-center space-y-2">
-              <FaCashRegister className="text-6xl" />
-              <span>Venda Realizada</span>
+            <Link to="/relatorioVendas" className={iconClassName}>
+              <FaCashRegister className="text-7xl" />
+              <span className="text-xl">Venda Realizada</span>
             </Link>
-            <Link to="/relatorioPagar" className="flex flex-col items-center space-y-2">
-              <FaFileInvoiceDollar className="text-6xl" />
-              <span>A Pagar</span>
+            <Link to="/relatorioPagar" className={iconClassName}>
+              <FaFileInvoiceDollar className="text-7xl" />
+              <span className="text-xl">A Pagar</span>
             </Link>
-            <Link to="/relatorioReceber" className="flex flex-col items-center space-y-2">
-              <FaFileInvoice className="text-6xl" />
-              <span>A Receber</span>
+            <Link to="/relatorioReceber" className={iconClassName}>
+              <FaFileInvoice className="text-7xl" />
+              <span className="text-xl">A Receber</span>
             </Link>
           </div>
         );
@@ -79,18 +79,33 @@ const Home = () => {
   };
 
   return (
-    <div className="home-container h-screen w-screen  text-white">
-      <header className="home-header flex justify-between items-center p-6 ">
-        <h1 className="text-xl font-bold">Adegas SGE</h1>
+    <div className="home-container h-screen w-screen text-white">
+      <header className="home-header flex justify-between items-center p-6 mb-8">
+        <h1 className="text-4xl font-bold">Adegas SGE</h1>
         <div className="flex items-center space-x-4">
           <span>Tiago Oliveira da Silva</span>
         </div>
       </header>
 
-      <nav className="home-nav flex justify-center space-x-8 py-4 border-b border-gray-500">
-        <button onClick={() => setCurrentSection('cadastros')} className="hover:underline">Cadastros</button>
-        <button onClick={() => setCurrentSection('utilitarios')} className="hover:underline">Utilitários</button>
-        <button onClick={() => setCurrentSection('relatorios')} className="hover:underline">Relatórios</button>
+      <nav className="home-nav flex justify-center space-x-4 py-6 border-b border-gray-500">
+        <button
+          onClick={() => setCurrentSection('cadastros')}
+          className={`text-2xl px-4 py-2 ${currentSection === 'cadastros' ? 'active' : ''}`}
+        >
+          Cadastros
+        </button>
+        <button
+          onClick={() => setCurrentSection('utilitarios')}
+          className={`text-2xl px-4 py-2 ${currentSection === 'utilitarios' ? 'active' : ''}`}
+        >
+          Utilitários
+        </button>
+        <button
+          onClick={() => setCurrentSection('relatorios')}
+          className={`text-2xl px-4 py-2 ${currentSection === 'relatorios' ? 'active' : ''}`}
+        >
+          Relatórios
+        </button>
       </nav>
 
       <main className="home-main flex flex-col items-center mt-12 space-y-12">

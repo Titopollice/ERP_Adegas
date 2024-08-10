@@ -1,36 +1,87 @@
-/* src/pages/Home.css */
 .home-container {
-  background-color: #001a33; /* Cor específica para o header */
+  background-color: #001a33;
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  
+}
 
-    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  }
-  
-  .home-header {
-    background-color: #001a33; /* Cor específica para o header */
-  }
-  
-  .home-nav a {
-    color: white;
-    background-color: #001a33; /* Cor específica para o header */
+.home-header {
+  background-color: #001a33;
+}
 
-  }
-  
-  .home-nav a:hover {
-    text-decoration: underline;
-    background-color: #001a33; /* Cor específica para o header */
+.home-nav button {
+  color: white;
+  background-color: #001a33;
+  border-right: 1px solid #d1d5db;
+  padding: 0.5rem 1rem;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
 
-  }
-  
-  .home-main {
-    /* Estilos específicos para o main */
-    background-color: #001a33; /* Cor específica para o header */
+.home-nav button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #d1d5db;
+}
 
+.home-nav button.active {
+  border-bottom: 2px solid white;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.home-nav button:last-child {
+  border-right-width: 0;
+}
+
+.home-main {
+  background-color: #001a33;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* Alinha o conteúdo verticalmente no centro */
+  /*height: calc(100vh - 130px); /* Ajuste a altura para acomodar o cabeçalho e o rodapé */
+  margin-top: 0; /* Remove a margem superior */
+  padding: 0 1rem; /* Adiciona algum espaçamento lateral se necessário */
   }
   
-  .home-footer {
-    background-color: #001a33; /* Cor específica para o header */
-    color: #ffffff;
-    font-size: 0.875rem;
-    margin-top: 3rem;
-  }
-  
+
+
+.home-footer {
+  background-color: #001a33;
+  color: #ffffff;
+  font-size: 0.875rem;
+  margin-top: auto;
+  padding: 1rem 0;
+  text-align: center;
+}
+
+/* src/pages/Home.css */
+.home-nav .active {
+  border-bottom: 2px solid white;
+  /* Adiciona uma borda inferior para destacar o botão ativo */
+  color: white;
+  /* Cor do texto para o botão ativo */
+  padding-bottom: 0.5rem;
+  /* Ajusta o espaçamento para a borda */
+}
+
+
+.home-nav button {
+  border-right-width: 8px;
+  /* Adiciona uma borda direita para todos os botões */
+  border-color: #d1d5db00;
+  /* Cor da borda */
+}
+
+.home-nav button.active {
+  border-bottom: 2px solid white;
+  /* Adiciona uma borda inferior para destacar o botão ativo */
+  padding-bottom: 0.5rem;
+  /* Ajusta o espaçamento para a borda inferior */
+  background-color: rgba(255, 255, 255, 0.1);
+  /* Adiciona um fundo sutil para o botão ativo, opcional */
+}
+
+.home-nav button:last-child {
+  border-right-width: 0;
+  /* Remove a borda direita do último botão */
+}
+

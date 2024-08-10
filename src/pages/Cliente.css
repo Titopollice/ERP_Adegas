@@ -1,6 +1,7 @@
 /* src/pages/ClientRegistration.css */
 .client-registration-container {
     font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    background:#001a33;
   }
   
   .client-registration-box {

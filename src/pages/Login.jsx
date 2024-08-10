@@ -17,7 +17,7 @@ const Login = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen w-screen bg-gradient-to-b from-blue-800 to-blue-500">
+    <div className="flex flex-col items-center justify-center h-screen w-screen bg-gradient-to-b from-blue-900 to-blue-900">
       <div className="flex flex-col items-center mb-8">
         <img src={logo} alt="Logo" className="h-24 mb-4 rounded" />
         <h1 className="text-3xl font-semibold text-white">Adegas SG</h1>

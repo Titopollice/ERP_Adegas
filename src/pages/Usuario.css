@@ -3,6 +3,7 @@
     font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
     min-height: 100vh;
     background-color: #f4f6f9;
+    text-align: center;
   }
   
   .users-header, .users-nav {
@@ -38,17 +39,32 @@
     color: white;
   }
   
-  .btn-back, .btn-save {
-    background-color: #28a745;
+  .btn-back, .btn-save ,.btn-update{
+    background-color:   #28a745;
     color: white;
   }
   
-  .btn-delete {
-    background-color: #dc3545;
+  .btn-clear {
+    background-color: #c96b06;
     color: white;
   }
   
   .btn:hover {
     opacity: 0.8;
   }
+
+  .users-table {
+    max-height: 100px; 
+    overflow-y: auto;
+    border: 1px solid #8a8888; 
+  }
+  
+  .users-table thead th {
+    position: sticky;
+    top: 0;
+    background-color: #001a33; 
+    color: rgb(237, 237, 237);
+    z-index: 1; /* Mantém o cabeçalho acima das linhas da tabela ao rolar */
+  }
+  
   

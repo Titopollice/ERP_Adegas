@@ -1,167 +1,315 @@
-// src/pages/ClientRegistration.jsx
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { FaArrowLeft } from 'react-icons/fa';
-import './Cliente.css'; // Ajustar o caminho conforme necessário
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { FaArrowLeft, FaSearch, FaPlus, FaTrash, FaEdit } from "react-icons/fa";
+import axios from "axios";
+import InputMask from "react-input-mask";
+import "./Cliente.css";
 
 const Cliente = () => {
   const navigate = useNavigate();
-  const [name, setName] = useState('');
-  const [cpfCnpj, setCpfCnpj] = useState('');
-  const [type, setType] = useState('física');
-  const [number, setNumber] = useState('');
-  const [district, setDistrict] = useState('');
-  const [complement, setComplement] = useState('');
-  const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
+  const [clientes, setClientes] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [nome, setNome] = useState("");
+  const [cpf, setCpf] = useState("");
+  const [endereco, setEndereco] = useState("");
+  const [numero, setNumero] = useState("");
+  const [bairro, setBairro] = useState("");
+  const [telefone, setTelefone] = useState("");
+  const [email, setEmail] = useState("");
+  const [selectedClienteId, setSelectedClienteId] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
 
-  const handleSave = () => {
-    // Lógica para salvar o cliente
-    console.log('Salvar cliente:', { name, cpfCnpj, type, number, district, complement, phone, email });
+  useEffect(() => {
+    axios
+      .get("http://localhost:8080/api/cliente")
+      .then((response) => {
+        setClientes(response.data);
+      })
+      .catch((error) => {
+        console.error("Erro ao buscar clientes:", error);
+      });
+  }, []);
+
+  const buscarClientes = () => {
+    axios
+      .get(`http://localhost:8080/api/cliente?search=${searchTerm}`)
+      .then((response) => {
+        setClientes(response.data);
+      })
+      .catch((error) => {
+        console.error("Erro ao buscar clientes:", error);
+      });
+  };
+
+  const adicionarCliente = () => {
+    const novoCliente = {
+      nome,
+      cpf,
+      endereco,
+      numero,
+      bairro,
+      telefone,
+      email,
+    };
+
+    axios
+      .post("http://localhost:8080/api/cliente", novoCliente)
+      .then((response) => {
+        setClientes([...clientes, response.data]);
+        buscarClientes();
+        limparCampos();
+      })
+      .catch((error) => {
+        console.error("Erro ao adicionar cliente:", error);
+      });
+  };
+
+  const atualizarCliente = () => {
+    const clienteAtualizado = {
+      nome,
+      cpf,
+      endereco,
+      numero,
+      bairro,
+      telefone,
+      email,
+    };
+
+    axios
+      .put(`http://localhost:8080/api/cliente/${selectedClienteId}`, clienteAtualizado)
+      .then((response) => {
+        setClientes(
+          clientes.map((cliente) =>
+            cliente.clienteID === selectedClienteId ? response.data : cliente
+          )
+        );
+        buscarClientes();
+        limparCampos();
+        setIsEditing(false);
+      })
+      .catch((error) => {
+        console.error("Erro ao atualizar cliente:", error);
+      });
+  };
+
+  const excluirCliente = (id) => {
+    axios
+      .patch(`http://localhost:8080/api/cliente/${id}`)
+      .then(() => {
+        setClientes((prevClientes) =>
+          prevClientes.map((cliente) =>
+            cliente.clienteID === id ? { ...cliente, status: cliente.status === 'Ativo' ? 'Inativo' : 'Ativo' } : cliente
+          )
+        );
+        buscarClientes();
+      })
+      .catch((error) => {
+        console.error("Erro ao alterar o status do cliente:", error);
+      });
+  };
+
+  const editarCliente = (cliente) => {
+    setSelectedClienteId(cliente.clienteID);
+    setNome(cliente.nome);
+    setCpf(cliente.cpf);
+    setEndereco(cliente.endereco);
+    setNumero(cliente.numero);
+    setBairro(cliente.bairro);
+    setTelefone(cliente.telefone);
+    setEmail(cliente.email);
+    setIsEditing(true);
+  };
+
+  const limparCampos = () => {
+    setNome("");
+    setCpf("");
+    setEndereco("");
+    setNumero("");
+    setBairro("");
+    setTelefone("");
+    setEmail("");
+    setSelectedClienteId(null);
+    setIsEditing(false);
   };
 
   return (
-    <div className="client-registration-container h-screen w-screenbg-gradient-to-b from-blue-800 to-blue-900 text-white flex flex-col">
-      <header className="accounts-payable-header flex justify-between items-center p-6">
-        <h1 className="text-xl font-bold">Cliente</h1>
+    <div className="clientes-container">
+      <header className="clientes-header flex justify-between items-center p-6">
+        <h1 className="text-xl font-bold">Administração de Clientes</h1>
         <div className="flex items-center space-x-4">
           <span>Tiago Oliveira da Silva</span>
           <div className="flex items-center space-x-2">
-            <FaArrowLeft onClick={() => navigate(-1)} className="text-lg cursor-pointer" title="Voltar" />
+            <FaArrowLeft
+              onClick={() => navigate(-1)}
+              className="text-lg cursor-pointer"
+              title="Voltar"
+            />
           </div>
         </div>
       </header>
 
-      <div className="client-registration-box bg-white text-black p-8 rounded-lg shadow-lg w-3/4 mx-auto mt-10">
-        <div className="flex justify-between items-center mb-4">
-          <h1 className="text-2xl font-bold">Cadastro de Cliente</h1>
-          <button onClick={() => navigate(-1)} className="btn btn-back">Voltar</button>
+      <div className="clientes-nav flex justify-between p-4">
+        <div>
+          <h2 className="text-lg">Clientes</h2>
         </div>
+        <div className="flex items-center space-x-4">
+          <button
+            className="btn btn-add flex items-center"
+            onClick={adicionarCliente}
+            disabled={isEditing}
+          >
+            <FaPlus className="mr-2" />
+            Adicionar
+          </button>
+          <button className="btn btn-back" onClick={() => navigate(-1)}>
+            Voltar
+          </button>
+        </div>
+      </div>
 
-        <div className="client-registration-search flex mb-6">
-          <input 
-            type="text" 
-            placeholder="Buscar clientes..." 
-            className="input-search flex-1 p-2 border rounded-l" 
+      <main className="clientes-main p-6">
+        <div className="clientes-search flex mb-6">
+          <input
+            type="text"
+            placeholder="Clientes"
+            className="input-search w-full"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <button className="btn btn-search rounded-r px-4">Pesquisar</button>
+          <button className="btn btn-search ml-4" onClick={buscarClientes}>
+            <FaSearch />
+          </button>
         </div>
 
-        <div className="client-list mb-6 bg-gray-100 p-4 rounded-lg overflow-auto">
-          <table className="w-full text-left border-collapse">
+        <div className="clientes-table overflow-auto mb-6" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+          <table className="w-full border-collapse">
             <thead>
               <tr>
-                <th className="p-2 border-b">Cliente</th>
-                <th className="p-2 border-b">CPF/CNPJ</th>
-                <th className="p-2 border-b">Endereço</th>
-                <th className="p-2 border-b">Telefone</th>
+                <th className="border p-2">ID</th>
+                <th className="border p-2">Nome</th>
+                <th className="border p-2">CPF</th>
+                <th className="border p-2">Endereço</th>
+                <th className="border p-2">Status</th>
+                <th className="border p-2">Ações</th>
               </tr>
             </thead>
             <tbody>
-              {/* Adicionar lista de clientes aqui */}
-              <tr>
-                <td className="p-2 border-b">Exemplo Nome</td>
-                <td className="p-2 border-b">000.000.000-00</td>
-                <td className="p-2 border-b">Rua Exemplo, 123</td>
-                <td className="p-2 border-b">(00) 0000-0000</td>
-              </tr>
+              {clientes.length > 0 ? (
+                clientes.map((cliente) => (
+                  <tr key={cliente.clienteID}>
+                    <td className="border p-2 text-center">{cliente.clienteID}</td>
+                    <td className="border p-2 text-center">{cliente.nome}</td>
+                    <td className="border p-2 text-center">{cliente.cpf}</td>
+                    <td className="border p-2 text-center">{cliente.endereco}</td>
+                    <td className="border p-2 text-center">{cliente.status}</td>
+                    <td className="border p-2 text-center flex justify-center">
+                      <button
+                        className="btn btn-edit flex items-center mr-2"
+                        style={{ backgroundColor: "yellow" }}
+                        onClick={() => editarCliente(cliente)}
+                      >
+                        <FaEdit className="mr-2" />
+                        Editar
+                      </button>
+                      <button
+                        className="btn btn-delete flex items-center"
+                        onClick={() => excluirCliente(cliente.clienteID)}
+                      >
+                        <FaTrash className="mr-2" />
+                        {cliente.status === 'Ativo' ? 'Inativar' : 'Ativar'}
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="6" className="border p-2 text-center">
+                    Nenhum cliente encontrado.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
 
-        <div className="client-details mt-8">
+        <div className="clientes-details mt-8">
+          <h3 className="text-lg mb-4">Dados do Cliente</h3>
+          <input
+            type="text"
+            placeholder="Nome"
+            className="input-detail mb-4 w-full"
+            value={nome}
+            onChange={(e) => setNome(e.target.value)}
+          />
           <div className="grid grid-cols-2 gap-4">
-            <div className="flex flex-col">
-              <label>Nome</label>
-              <input 
-                type="text" 
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="input-detail p-2 border rounded" 
-              />
-            </div>
-            <div className="flex flex-col">
-              <label>CPF/CNPJ</label>
-              <input 
-                type="text" 
-                value={cpfCnpj}
-                onChange={(e) => setCpfCnpj(e.target.value)}
-                className="input-detail p-2 border rounded" 
-              />
-            </div>
+            <InputMask
+              mask="999.999.999-99"
+              placeholder="CPF"
+              className="input-detail"
+              value={cpf}
+              onChange={(e) => setCpf(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="Endereço"
+              className="input-detail"
+              value={endereco}
+              onChange={(e) => setEndereco(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="Número"
+              className="input-detail"
+              value={numero}
+              onChange={(e) => setNumero(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="Bairro"
+              className="input-detail"
+              value={bairro}
+              onChange={(e) => setBairro(e.target.value)}
+            />
+            <InputMask
+              mask="(99) 99999-9999"
+              placeholder="Telefone"
+              className="input-detail"
+              value={telefone}
+              onChange={(e) => setTelefone(e.target.value)}
+            />
+            <input
+              type="email"
+              placeholder="Email"
+              className="input-detail"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
           </div>
-
-          <div className="grid grid-cols-2 gap-4 mt-4">
-            <div className="flex flex-col">
-              <label>Endereço</label>
-              <input 
-                type="text" 
-                value={number}
-                onChange={(e) => setNumber(e.target.value)}
-                className="input-detail p-2 border rounded" 
-              />
-            </div>
-            <div className="flex flex-col">
-              <label>Telefone</label>
-              <input 
-                type="text" 
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                className="input-detail p-2 border rounded" 
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4 mt-4">
-            <div className="flex flex-col">
-              <label>Bairro</label>
-              <input 
-                type="text" 
-                value={district}
-                onChange={(e) => setDistrict(e.target.value)}
-                className="input-detail p-2 border rounded" 
-              />
-            </div>
-            <div className="flex flex-col">
-              <label>Complemento</label>
-              <input 
-                type="text" 
-                value={complement}
-                onChange={(e) => setComplement(e.target.value)}
-                className="input-detail p-2 border rounded" 
-              />
-            </div>
-          </div>
-          <div className="flex mt-4">
-            <label className="mr-4">Tipo:</label>
-            <label className="flex items-center mr-4">
-              <input 
-                type="radio" 
-                value="física" 
-                checked={type === 'física'}
-                onChange={() => setType('física')} 
-              /> 
-              <span className="ml-2">Física</span>
-            </label>
-            <label className="flex items-center">
-              <input 
-                type="radio" 
-                value="jurídica" 
-                checked={type === 'jurídica'}
-                onChange={() => setType('jurídica')} 
-              /> 
-              <span className="ml-2">Jurídica</span>
-            </label>
-          </div>
-          <div className="flex justify-between mt-6">
-            <button className="btn btn-add">Adicionar</button>
-            <button className="btn btn-delete">Excluir</button>
-            <button onClick={handleSave} className="btn btn-save">Salvar</button>
+          <div className="flex justify-end mt-4">
+            {isEditing ? (
+              <button
+                className="btn btn-update flex items-center"
+                onClick={atualizarCliente}
+              >
+                <FaEdit className="mr-2" />
+                Atualizar
+              </button>
+            ) : (
+              <button
+                className="btn btn-save flex items-center"
+                onClick={adicionarCliente}
+                disabled={isEditing}
+              >
+                <FaPlus className="mr-2" />
+                Salvar
+              </button>
+            )}
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 };
 
 export default Cliente;
+    

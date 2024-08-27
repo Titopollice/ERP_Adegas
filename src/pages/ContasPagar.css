@@ -1,59 +1,110 @@
-/* src/pages/AccountsPayable.css */
-.accounts-payable-container {
-    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-    min-height: 100vh;
-    background-color: #f4f6f9;
-  }
-  
-  .accounts-payable-header, .accounts-payable-nav {
-    background-color: #001a33;
-    color: white;
-  }
-  
-  .accounts-payable-nav {
-    border-bottom: 1px solid #ccc;
-  }
-  
-  .accounts-payable-main {
-    padding: 1.5rem;
-    background-color: white;
-  }
-  
-  .input-search, .input-detail {
-    border: 1px solid #ccc;
-    padding: 0.5rem;
-    border-radius: 4px;
-  }
-  
-  .btn {
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-  }
-  
-  .btn-add {
-    background-color: #007bff;
-    color: white;
-  }
-  
-  .btn-back, .btn-save {
-    background-color: #28a745;
-    color: white;
-  }
-  
-  .btn-delete {
-    background-color: #dc3545;
-    color: white;
-  }
-  
-  .btn-check {
-    background-color: #ffc107;
-    color: white;
-  }
-  
-  .btn:hover {
-    opacity: 0.8;
-  }
-  
+/* src/pages/ContasPagar.css */
+.contas-container {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  min-height: 100vh;
+  background-color: #f4f6f9;
+}
+
+.contas-header, .contas-nav {
+  background-color: #001a33;
+  color: white;
+}
+
+.contas-nav {
+  border-bottom: 1px solid #ccc;
+}
+
+.contas-main {
+  padding: 1.5rem;
+  background-color: white;
+}
+
+.input-search, .input-detail {
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+  border-radius: 4px;
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.btn-add {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-back, .btn-save {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-delete {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-edit {
+  background-color: yellow;
+}
+
+.btn:hover {
+  opacity: 0.8;
+}
+
+.btn-download {
+  background-color: #007bff;
+  color: white;
+}
+/* Tab Header */
+.tab-header {
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 1rem;
+}
+
+.tab-button {
+  padding: 0.5rem 1rem;
+  background-color: #001a33;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  border-radius: 4px 4px 0 0;
+  transition: background-color 0.3s;
+}
+
+.tab-button.active {
+  background-color: #007bff;
+  color: white;
+}
+
+.tab-button:not(.active):hover {
+  background-color: #003366;
+}
+
+/* Tab Content */
+.dadosConta, .gerarParcelas {
+  background-color: #f4f6f9;
+  padding: 1.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.dadosConta h2, .gerarParcelas h2 {
+  margin-bottom: 1rem;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}

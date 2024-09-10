@@ -1,77 +1,97 @@
-  // src/pages/Login.jsx
-  import React, { useState } from 'react';
-  import { useNavigate } from 'react-router-dom';  // Alterado de useHistory para useNavigate
-  import logo from '../assets/logo.jpg';
+import React, { useState } from "react";
+import axios from "axios";
 
-  const Login = () => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const navigate = useNavigate();  // Alterado de history para navigate
+const Login = () => {
+  const [usuarioLogin, setUsuarioLogin] = useState("");
+  const [senha, setSenha] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-    const handleLogin = (e) => {
-      e.preventDefault();
-      // Lógica de autenticação
-      console.log('Username:', username, 'Password:', password);
-      // Simulando login bem-sucedido
-      navigate('/');  // Alterado de history.push('/') para navigate('/')
-    };
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
 
-    return (
-      <div className="flex flex-col items-center justify-center h-screen w-screen bg-gradient-to-b from-blue-900 to-blue-900">
-        <div className="flex flex-col items-center mb-8">
-          <img src={logo} alt="Logo" className="h-24 mb-4 rounded" />
-          <h1 className="text-3xl font-semibold text-white">Adegas SG</h1>
-        </div>
-        <form onSubmit={handleLogin} className="w-full max-w-md bg-white p-8 rounded-xl shadow-lg">
-          <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
-              Nome de usuário
+    try {
+      // Envia as credenciais para o backend
+      const response = await axios.post(
+        "http://localhost:8080/api/usuario/login",
+        {
+          usuarioLogin,
+          senha,
+        }
+      );
+
+      // Se o login for bem-sucedido, armazene o token JWT
+      const token = response.data.token;
+      localStorage.setItem("token", token);
+
+      // Redireciona o usuário para outra página (exemplo: dashboard)
+      window.location.href = "/";
+    } catch (error) {
+      // Mostra a mensagem de erro ao usuário
+      if (error.response && error.response.status === 401) {
+        setErrorMessage("Credenciais inválidas");
+      } else {
+        setErrorMessage("Erro ao realizar login");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="flex justify-center items-center h-screen bg-gray-100">
+      <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
+        <h2 className="text-2xl font-bold text-center mb-6">Login</h2>
+        {errorMessage && (
+          <p className="text-red-500 text-center mb-4">{errorMessage}</p>
+        )}
+        <form onSubmit={handleLogin}>
+          <div className="mb-4">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="usuarioLogin"
+            >
+              Usuário
             </label>
             <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="username"
               type="text"
-              placeholder="Nome de usuário"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              id="usuarioLogin"
+              value={usuarioLogin}
+              onChange={(e) => setUsuarioLogin(e.target.value)}
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               required
             />
           </div>
           <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="senha"
+            >
               Senha
             </label>
             <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-              id="password"
               type="password"
-              placeholder="Senha"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              id="senha"
+              value={senha}
+              onChange={(e) => setSenha(e.target.value)}
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               required
             />
           </div>
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between">
             <button
-              className="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               type="submit"
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              disabled={isLoading}
             >
-              Entrar
+              {isLoading ? "Entrando..." : "Entrar"}
             </button>
           </div>
-          <div className="text-center">
-            <a href="#" className="text-sm text-blue-500 hover:text-blue-700">
-              Esqueceu a senha?
-            </a>
-          </div>
         </form>
-        <div className="mt-8 text-center text-white">
-          <p>Direitos e Avisos</p>
-          <p>1.00.00.00</p>
-        </div>
       </div>
-    );
-  };
+    </div>
+  );
+};
 
-  export default Login;
-
+export default Login;

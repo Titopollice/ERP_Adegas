@@ -35,9 +35,12 @@ src/pages/Sales.css
   .sales-info-item {
     border: 1px solid #ccc;
     padding: 0.5rem;
+    text-align: center;
     border-radius: 4px;
   }
   
+  
+
   .sales-summary {
     text-align: right;
   }

@@ -39,12 +39,14 @@ const Vendas = () => {
           <div className="sales-info-item">Desc.%</div>
           <div className="sales-info-item">Desc.R$</div>
           <div className="sales-info-item">Valor Total</div>
-          <div className="sales-info-item">2</div>
-          <div className="sales-info-item">2,00</div>
-          <div className="sales-info-item">5%</div>
-          <div className="sales-info-item">1,90</div>
-          <div className="sales-info-item">1,90</div>
+
+          <input type="number" className="sales-info-item" defaultValue={0} />
+          <input type="number" className="sales-info-item" defaultValue={0.00} />
+          <input type="number" className="sales-info-item" defaultValue={0} />
+          <input type="number" className="sales-info-item" defaultValue={0.00} />
+          <input type="number" className="sales-info-item" defaultValue={0.00} />
         </div>
+
 
         <div className="sales-summary mb-6">
           <h3 className="text-lg">Valor da Compra: <span className="text-red-500">0,00</span></h3>
@@ -66,7 +68,8 @@ const Vendas = () => {
           </table>
         </div>
 
-        <div className="sales-actions flex space-x-4">
+        <footer className="sales-footer mt-8">
+          <div className="sales-actions flex space-x-4">
           <button className="btn btn-delete">
             <FaTrash className="mr-2" />
             Deletar Item
@@ -80,10 +83,8 @@ const Vendas = () => {
             Finalizar
           </button>
         </div>
-
-        <footer className="sales-footer mt-8">
-          <button className="btn btn-back" onClick={() => navigate(-1)}>Voltar</button>
         </footer>
+        
       </main>
     </div>
   );

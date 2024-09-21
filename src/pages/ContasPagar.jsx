@@ -4,6 +4,7 @@ import { FaArrowLeft, FaSearch, FaPlus, FaTrash, FaEdit, FaDownload } from "reac
 import axios from "axios";
 import InputMask from "react-input-mask";
 import "./ContasPagar.css";
+import { FaEye } from "react-icons/fa6";
 
 const ContasPagar = () => {
   const navigate = useNavigate();
@@ -16,8 +17,21 @@ const ContasPagar = () => {
   const [selectedContaId, setSelectedContaId] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState("dadosConta");
+  const [novaParcela, setNovaParcela] = useState({
+    numero: "",
+    descricao: "",
+    valor: "",
+    vencimento: "",
+    datacriacao: "",
+    status: "",
+    data_baixa: ""
+  });
 
   useEffect(() => {
+    fetchContas();
+  }, []);
+
+  const fetchContas = () => {
     axios
       .get("http://localhost:8080/api/contas")
       .then((response) => {
@@ -26,7 +40,7 @@ const ContasPagar = () => {
       .catch((error) => {
         console.error("Erro ao buscar contas:", error);
       });
-  }, []);
+  };
 
   const buscarContas = () => {
     axios
@@ -96,20 +110,49 @@ const ContasPagar = () => {
       });
   };
 
-  const gerarParcelas = (id) => {
+  const gerarParcelas = () => {
+    // Implementação para gerar parcelas com base nos campos fornecidos
+    // Supondo que você queira enviar 'novaParcela' ao backend para criar uma parcela
+    if (!selectedContaId) {
+      alert("Selecione uma conta para gerar parcelas.");
+      return;
+    }
+
+    const parcelaData = {
+      numero: novaParcela.numero,
+      descricao: novaParcela.descricao,
+      valor: novaParcela.valor,
+      vencimento: novaParcela.vencimento,
+      datacriacao: novaParcela.datacriacao,
+      status: novaParcela.status,
+      data_baixa: novaParcela.data_baixa,
+    };
+
     axios
-      .post(`http://localhost:8080/api/contas/${id}/parcelas`)
+      .post(`http://localhost:8080/api/contas/${selectedContaId}/parcelas`, parcelaData)
       .then((response) => {
-        setParcelas(response.data);
+        // Atualiza a lista de parcelas após a criação
+        setParcelas([...parcelas, response.data]);
+        alert("Parcela adicionada com sucesso!");
+        // Limpar campos de novaParcela
+        setNovaParcela({
+          numero: "",
+          descricao: "",
+          valor: "",
+          vencimento: "",
+          datacriacao: "",
+          status: "",
+          data_baixa: ""
+        });
       })
       .catch((error) => {
-        console.error("Erro ao gerar parcelas:", error);
+        console.error("Erro ao gerar parcela:", error);
       });
   };
 
   const baixarParcelas = (id) => {
     axios
-      .get(`http://localhost:8080/api/contas/${id}/parcelas/download`)
+      .get(`http://localhost:8080/api/contas/${id}/parcelas/download`, { responseType: 'blob' })
       .then((response) => {
         // Implementar o download do arquivo
         const blob = new Blob([response.data], { type: 'application/pdf' });
@@ -140,6 +183,43 @@ const ContasPagar = () => {
     setSelectedContaId(null);
     setIsEditing(false);
   };
+
+  const handleMarcarBaixa = (parcelaId) => {
+    // Implementar a lógica para dar baixa na parcela
+    axios
+      .put(`http://localhost:8080/api/parcelas/${parcelaId}/dar-baixa`)
+      .then((response) => {
+        // Atualiza a lista de parcelas
+        setParcelas(
+          parcelas.map((parcela) =>
+            parcela.id === parcelaId ? response.data : parcela
+          )
+        );
+        alert("Parcela marcada como paga!");
+      })
+      .catch((error) => {
+        console.error("Erro ao dar baixa na parcela:", error);
+      });
+  };
+
+  const fetchParcelas = () => {
+    if (selectedContaId) {
+      axios
+        .get(`http://localhost:8080/api/contas/${selectedContaId}/parcelas`)
+        .then((response) => {
+          setParcelas(response.data);
+        })
+        .catch((error) => {
+          console.error("Erro ao buscar parcelas:", error);
+        });
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === "parcelas") {
+      fetchParcelas();
+    }
+  }, [activeTab, selectedContaId]);
 
   return (
     <div className="contas-container">
@@ -227,17 +307,10 @@ const ContasPagar = () => {
                       </button>
                       <button
                         className="btn btn-add flex items-center ml-2"
-                        onClick={() => gerarParcelas(conta.contaID)}
+                        onClick={() =>  editarConta(conta)}
                       >
-                        <FaPlus className="mr-2" />
-                        Gerar Parcelas
-                      </button>
-                      <button
-                        className="btn btn-add flex items-center ml-2"
-                        onClick={() => baixarParcelas(conta.contaID)}
-                      >
-                        <FaDownload className="mr-2" />
-                        Baixar Parcelas
+                        <FaEye className="mr-2" />
+                        Mostrar Parcelas
                       </button>
                     </td>
                   </tr>
@@ -254,19 +327,21 @@ const ContasPagar = () => {
         </div>
 
         <div className="contas-detalhes">
-          <div className="tab-header flex space-x-4">
+          <div className="tab-header flex space-x-4 mb-4">
             <button
               className={`tab-button ${activeTab === "dadosConta" ? "active" : ""}`}
               onClick={() => setActiveTab("dadosConta")}
             >
               Dados da Conta
             </button>
-            <button
-              className={`tab-button ${activeTab === "gerarParcelas" ? "active" : ""}`}
-              onClick={() => setActiveTab("gerarParcelas")}
-            >
-              Gerar Parcelas
-            </button>
+            {isEditing && (
+              <button
+                className={`tab-button ${activeTab === "parcelas" ? "active" : ""}`}
+                onClick={() => setActiveTab("parcelas")}
+              >
+                Parcelas
+              </button>
+            )}
           </div>
 
           {activeTab === "dadosConta" && (
@@ -311,11 +386,56 @@ const ContasPagar = () => {
             </div>
           )}
 
-          {activeTab === "gerarParcelas" && (
-            <div className="gerarParcelas">
-              <h2 className="text-lg">Gerar Parcelas</h2>
-              <p>Funcionalidade para gerar parcelas</p>
-              {/* Aqui você pode adicionar mais campos ou opções para configurar a geração de parcelas */}
+          {activeTab === "parcelas" && (
+            <div className="parcelas">
+              <h2 className="text-lg">Parcelas</h2>
+              <div className="parcelas-table overflow-auto mb-6" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr>
+                      <th className="border p-2">Número</th>
+                      <th className="border p-2">Descrição</th>
+                      <th className="border p-2">Valor</th>
+                      <th className="border p-2">Vencimento</th>
+                      <th className="border p-2">Data de Criação</th>
+                      <th className="border p-2">Status</th>
+                      <th className="border p-2">Data de Baixa</th>
+                      <th className="border p-2">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {parcelas.length > 0 ? (
+                      parcelas.map((parcela) => (
+                        <tr key={parcela.id}>
+                          <td className="border p-2 text-center">{parcela.numero}</td>
+                          <td className="border p-2 text-center">{parcela.descricao}</td>
+                          <td className="border p-2 text-center">{parcela.valor}</td>
+                          <td className="border p-2 text-center">{parcela.vencimento}</td>
+                          <td className="border p-2 text-center">{parcela.datacriacao}</td>
+                          <td className="border p-2 text-center">{parcela.status}</td>
+                          <td className="border p-2 text-center">{parcela.data_baixa || '-'}</td>
+                          <td className="border p-2 text-center">
+                            {parcela.status !== "Pago" && (
+                              <button
+                                className="btn btn-baixar"
+                                onClick={() => handleMarcarBaixa(parcela.id)}
+                              >
+                                Dar Baixa
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="8" className="border p-2 text-center">
+                          Nenhuma parcela encontrada.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
         </div>

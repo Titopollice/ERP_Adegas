@@ -1,54 +1,54 @@
-/* src/pages/ProductEntry.css */
-.product-entry-container {
-    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-    min-height: 100vh;
-    background-color: #f4f6f9;
-  }
-  
-  .product-entry-header, .product-entry-nav {
-    background-color: #001a33;
-    color: white;
-  }
-  
-  .product-entry-nav {
-    border-bottom: 1px solid #ccc;
-  }
-  
-  .product-entry-main {
-    padding: 1.5rem;
-    background-color: white;
-  }
-  
-  .input-search, .input-detail {
-    border: 1px solid #ccc;
-    padding: 0.5rem;
-    border-radius: 4px;
-  }
-  
-  .btn {
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-  }
-  
-  .btn-manual, .btn-xml {
-    background-color: #007bff;
-    color: white;
-  }
-  
-  .btn-back {
-    background-color: #dc3545;
-    color: white;
-  }
-  
-  .btn-save {
-    background-color: #28a745;
-    color: white;
-  }
-  
-  .btn:hover {
-    opacity: 0.8;
-  }
-  
+  /* src/pages/ProductEntry.css */
+  .product-entry-container {
+      font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      background-color: #f4f6f9;
+    }
+    
+    .product-entry-header, .product-entry-nav {
+      background-color: #001a33;
+      color: white;
+    }
+    
+    .product-entry-nav {
+      border-bottom: 1px solid #ccc;
+    }
+    
+    .product-entry-main {
+      padding: 1.5rem;
+      background-color: white;
+    }
+    
+    .input-search, .input-detail {
+      border: 1px solid #ccc;
+      padding: 0.5rem;
+      border-radius: 4px;
+    }
+    
+    .btn {
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+    
+    .btn-manual, .btn-xml {
+      background-color: #007bff;
+      color: white;
+    }
+    
+    .btn-back {
+      background-color: #dc3545;
+      color: white;
+    }
+    
+    .btn-save {
+      background-color: #28a745;
+      color: white;
+    }
+    
+    .btn:hover {
+      opacity: 0.8;
+    }
+    

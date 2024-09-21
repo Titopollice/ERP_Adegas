@@ -19,7 +19,7 @@ const Usuario = () => {
   const [senha, setSenha] = useState("");
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-
+  
   useEffect(() => {
     axios
       .get("http://localhost:8080/api/usuario")

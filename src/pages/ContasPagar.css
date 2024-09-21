@@ -108,3 +108,16 @@
   border: 1px solid #ccc;
   border-radius: 4px;
 }
+/* Exemplo de estilos adicionais */
+
+.btn-baixar {
+  background-color: #28a745;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-baixar:hover {
+  background-color: #218838;
+}

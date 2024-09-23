@@ -47,6 +47,8 @@ src/pages/Sales.css
   
   .sales-table {
     margin-bottom: 1.5rem;
+    text-align: center;  /* Centraliza o texto horizontalmente */
+    vertical-align: middle;
   }
   
   .btn {

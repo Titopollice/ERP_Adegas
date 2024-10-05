@@ -5,7 +5,8 @@
   background-color: #f4f6f9;
 }
 
-.products-header, .products-nav {
+.products-header,
+.products-nav {
   background-color: #001a33;
   color: white;
 }
@@ -19,7 +20,8 @@
   background-color: white;
 }
 
-.input-search, .input-detail {
+.input-search,
+.input-detail {
   border: 1px solid #ccc;
   padding: 0.5rem;
   border-radius: 4px;
@@ -38,7 +40,8 @@
   color: white;
 }
 
-.btn-back, .btn-save {
+.btn-back,
+.btn-save {
   background-color: #007bff;
   color: white;
 }
@@ -55,9 +58,21 @@
 /* Novo estilo para o container das ações */
 .products-actions {
   display: flex;
-  justify-content: space-between; /* Distribui os botões ao longo do eixo principal */
-  align-items: center; /* Alinha os itens no centro verticalmente */
-  margin-top: 1rem; /* Espaço acima do container */
+  justify-content: space-between;
+  /* Distribui os botões ao longo do eixo principal */
+  align-items: center;
+  /* Alinha os itens no centro verticalmente */
+  margin-top: 1rem;
+  /* Espaço acima do container */
+}
+
+.products-table thead th {
+  position: sticky;
+  top: 0;
+  background-color: #001a33;
+  color: rgb(237, 237, 237);
+  z-index: 1;
+  /* Mantém o cabeçalho acima das linhas da tabela ao rolar */
 }
 
 .products-footer {
@@ -65,4 +80,3 @@
   padding: 1.5rem;
   background-color: white;
 }
-  

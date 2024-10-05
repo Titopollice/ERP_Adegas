@@ -32,14 +32,27 @@ const Fornecedor = () => {
   }, []);
 
   const buscarFornecedores = () => {
-    axios
-      .get(`http://localhost:8080/api/fornecedor?search=${searchTerm}`)
-      .then((response) => {
-        setFornecedores(response.data);
-      })
-      .catch((error) => {
-        console.error("Erro ao buscar fornecedores:", error);
-      });
+    if (searchTerm.trim() === "") {
+      // Se o campo de pesquisa estiver vazio, busque todos os produtos
+      axios
+        .get("http://localhost:8080/api/fornecedor")
+        .then((response) => {
+          setFornecedores(response.data);
+        })
+        .catch((error) => {
+          console.error("Erro ao buscar fornecedor:", error);
+        });
+    } else {
+      // Se houver termo de pesquisa, busque por nome
+      axios
+        .get(`http://localhost:8080/api/fornecedor/nome/${searchTerm}`)
+        .then((response) => {
+          setFornecedores(response.data);
+        })
+        .catch((error) => {
+          console.error("Erro ao buscar fornecedor pelo nome:", error);
+        });
+    }
   };
 
   const adicionarFornecedor = () => {

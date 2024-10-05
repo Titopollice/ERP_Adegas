@@ -27,14 +27,27 @@ const Produtos = () => {
   }, []);
 
   const buscarProdutos = () => {
-    axios
-      .get("http://localhost:8080/api/produto")
-      .then((response) => {
-        setProdutos(response.data);
-      })
-      .catch((error) => {
-        console.error("Erro ao buscar produtos:", error);
-      });
+    if (searchTerm.trim() === "") {
+      // Se o campo de pesquisa estiver vazio, busque todos os produtos
+      axios
+        .get("http://localhost:8080/api/produto")
+        .then((response) => {
+          setProdutos(response.data);
+        })
+        .catch((error) => {
+          console.error("Erro ao buscar produtos:", error);
+        });
+    } else {
+      // Se houver termo de pesquisa, busque por nome
+      axios
+        .get(`http://localhost:8080/api/produto/nome/${searchTerm}`)
+        .then((response) => {
+          setProdutos(response.data);
+        })
+        .catch((error) => {
+          console.error("Erro ao buscar produtos pelo nome:", error);
+        });
+    }
   };
 
   const adicionarProduto = () => {

@@ -31,14 +31,27 @@ const Cliente = () => {
   }, []);
 
   const buscarClientes = () => {
-    axios
-      .get(`http://localhost:8080/api/cliente?search=${searchTerm}`)
-      .then((response) => {
-        setClientes(response.data);
-      })
-      .catch((error) => {
-        console.error("Erro ao buscar clientes:", error);
-      });
+    if (searchTerm.trim() === "") {
+      // Se o campo de pesquisa estiver vazio, busque todos os produtos
+      axios
+        .get("http://localhost:8080/api/cliente")
+        .then((response) => {
+          setClientes(response.data);
+        })
+        .catch((error) => {
+          console.error("Erro ao buscar cliente:", error);
+        });
+    } else {
+      // Se houver termo de pesquisa, busque por nome
+      axios
+        .get(`http://localhost:8080/api/cliente/nome/${searchTerm}`)
+        .then((response) => {
+          setClientes(response.data);
+        })
+        .catch((error) => {
+          console.error("Erro ao buscar cliente pelo nome:", error);
+        });
+    }
   };
 
   const adicionarCliente = () => {

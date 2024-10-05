@@ -52,3 +52,11 @@
     opacity: 0.8;
   }
   
+  .suppliers-table thead th {
+    position: sticky;
+    top: 0;
+    background-color: #001a33;
+    color: rgb(237, 237, 237);
+    z-index: 1;
+    /* Mantém o cabeçalho acima das linhas da tabela ao rolar */
+  }

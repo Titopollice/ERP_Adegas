@@ -32,14 +32,27 @@ const Usuario = () => {
   }, []);
 
   const buscarUsuarios = () => {
-    axios
-      .get(`http://localhost:8080/api/usuario?search=${selectedUserId}`)
-      .then((response) => {
-        setUsuarios(response.data);
-      })
-      .catch((error) => {
-        console.error("Erro ao buscar usuários:", error);
-      });
+    if (searchTerm.trim() === "") {
+      // Se o campo de pesquisa estiver vazio, busque todos os produtos
+      axios
+        .get("http://localhost:8080/api/fornecedor")
+        .then((response) => {
+          setFornecedores(response.data);
+        })
+        .catch((error) => {
+          console.error("Erro ao buscar fornecedor:", error);
+        });
+    } else {
+      // Se houver termo de pesquisa, busque por nome
+      axios
+        .get(`http://localhost:8080/api/fornecedor/nome/${searchTerm}`)
+        .then((response) => {
+          setFornecedores(response.data);
+        })
+        .catch((error) => {
+          console.error("Erro ao buscar fornecedor pelo nome:", error);
+        });
+    }
   };
 
   const formatarData = (data) => {

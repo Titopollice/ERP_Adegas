@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import axios from "axios";
+import ForgotPasswordModal from "./ForgotPasswordModal"; // Importe o componente do modal
 
 const Login = () => {
   const [usuarioLogin, setUsuarioLogin] = useState("");
   const [senha, setSenha] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false); // Controle do modal
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -89,6 +91,19 @@ const Login = () => {
             </button>
           </div>
         </form>
+        <p className="mt-4 text-center">
+          <button
+            onClick={() => setIsModalOpen(true)} // Abre o modal ao clicar
+            className="text-blue-500 hover:underline"
+          >
+            Esqueceu sua senha?
+          </button>
+        </p>
+        {/* Modal para recuperação de senha */}
+        <ForgotPasswordModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
       </div>
     </div>
   );

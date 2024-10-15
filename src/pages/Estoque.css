@@ -31,6 +31,7 @@
       cursor: pointer;
       display: flex;
       align-items: center;
+      
     }
     
     .btn-manual, .btn-xml {
@@ -42,6 +43,26 @@
       background-color: #dc3545;
       color: white;
     }
+
+    .btn-remove-product {
+      background-color: transparent; /* Deixe o fundo transparente, se preferir */
+      color: #dc3545; /* Cor do texto, se necessário */
+      padding: 0.25rem; /* Reduz o padding */
+      font-size: 0.875rem; /* Tamanho da fonte menor */
+      border: none; /* Remove a borda, se houver */
+      cursor: pointer; /* Mantém o cursor como ponteiro */
+    }
+    
+    .btn-remove-product:hover {
+      opacity: 0.8; /* Efeito de hover */
+    }
+    
+
+    .btn-add-product {
+      background-color: #0be716;
+      color: white;
+    }
+    
     
     .btn-save {
       background-color: #28a745;

@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaPlus, FaUserCircle, FaEdit, FaTrash } from 'react-icons/fa';
 import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; // Importação do CSS do react-toastify
 import './Produtos.css'; // Importação do CSS padrão
 
 const Produtos = () => {
@@ -20,7 +22,7 @@ const Produtos = () => {
   const [temperatura, setTemperatura] = useState("");
   const [selectedProductId, setSelectedProductId] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [fieldsDisabled, setFieldsDisabled] = useState(true); // Novo estado para gerenciar a desativação dos campos
+  const [fieldsDisabled, setFieldsDisabled] = useState(true);
 
   useEffect(() => {
     buscarProdutos();
@@ -28,7 +30,6 @@ const Produtos = () => {
 
   const buscarProdutos = () => {
     if (searchTerm.trim() === "") {
-      // Se o campo de pesquisa estiver vazio, busque todos os produtos
       axios
         .get("http://localhost:8080/api/produto")
         .then((response) => {
@@ -38,7 +39,6 @@ const Produtos = () => {
           console.error("Erro ao buscar produtos:", error);
         });
     } else {
-      // Se houver termo de pesquisa, busque por nome
       axios
         .get(`http://localhost:8080/api/produto/nome/${searchTerm}`)
         .then((response) => {
@@ -51,6 +51,11 @@ const Produtos = () => {
   };
 
   const adicionarProduto = () => {
+    if (!nomeProduto || !safra || !paisdeorigem || !tipodeuva || !classificacao || !preco || !estoque || !codigodebarras || !temperatura) {
+      toast.error("Por favor, preencha todos os campos.");
+      return;
+    }
+
     const novoProduto = {
       nomeProduto,
       safra,
@@ -61,7 +66,7 @@ const Produtos = () => {
       estoque,
       codigodebarras,
       temperatura,
-      status: 'Ativo'  // Adicione esta linha para definir o status como 'Ativo' por padrão
+      status: 'Ativo'
     };
 
     axios
@@ -69,9 +74,11 @@ const Produtos = () => {
       .then(() => {
         buscarProdutos();
         limparCampos();
+        toast.success("Produto criado com sucesso!"); // Notificação de sucesso
       })
       .catch((error) => {
         console.error("Erro ao adicionar produto:", error);
+        toast.error("Erro ao criar produto!"); // Notificação de erro
       });
   };
 
@@ -94,10 +101,12 @@ const Produtos = () => {
         buscarProdutos();
         limparCampos();
         setIsEditing(false);
-        setFieldsDisabled(true); // Desativa os campos após a atualização
+        setFieldsDisabled(true);
+        toast.success("Produto atualizado com sucesso!"); // Notificação de sucesso
       })
       .catch((error) => {
         console.error("Erro ao atualizar produto:", error);
+        toast.error("Erro ao atualizar produto!"); // Notificação de erro
       });
   };
 
@@ -113,9 +122,12 @@ const Produtos = () => {
           )
         );
         buscarProdutos();
+        const mensagem = novoStatus === 'Inativo' ? "Produto inativado!" : "Produto ativado!";
+        toast.success(mensagem); // Notificação de sucesso
       })
       .catch((error) => {
         console.error("Erro ao alterar o status do produto:", error);
+        toast.error("Erro ao alterar o status do produto!"); // Notificação de erro
       });
   };
 
@@ -131,7 +143,7 @@ const Produtos = () => {
     setCodigoDeBarras(produto.codigodebarras);
     setTemperatura(produto.temperatura);
     setIsEditing(true);
-    setFieldsDisabled(false); // Ativa os campos para edição
+    setFieldsDisabled(false);
   };
 
   const limparCampos = () => {
@@ -146,11 +158,12 @@ const Produtos = () => {
     setTemperatura("");
     setSelectedProductId(null);
     setIsEditing(false);
-    setFieldsDisabled(true); // Desativa os campos após limpar
+    setFieldsDisabled(true);
   };
 
   return (
     <div className="products-container">
+      <ToastContainer /> {/* Contêiner para exibir as notificações */}
       <header className="products-header flex justify-between items-center p-6">
         <h1 className="text-xl font-bold">Estoque</h1>
         <div className="flex items-center space-x-4">
@@ -167,7 +180,7 @@ const Produtos = () => {
           <h2 className="text-lg">Estoque</h2>
         </div>
         <div className="flex items-center space-x-4">
-          <button className="btn btn-add flex items-center" onClick={() => { adicionarProduto(); setFieldsDisabled(false); }} disabled={isEditing}>
+          <button className="btn btn-add flex items-center" onClick={() => { setFieldsDisabled(false); }} disabled={isEditing}>
             <FaPlus className="mr-2" />
             Adicionar
           </button>
@@ -216,9 +229,7 @@ const Produtos = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="6" className="border p-2 text-center">
-                    Nenhum produto encontrado.
-                  </td>
+                  <td colSpan="6" className="text-center p-4">Nenhum produto encontrado</td>
                 </tr>
               )}
             </tbody>
@@ -226,19 +237,87 @@ const Produtos = () => {
         </div>
 
         <div className="products-details mt-8">
-          <h3 className="text-lg mb-4">Detalhes do Produto</h3>
-          <div className="grid grid-cols-3 gap-4">
-            <input type="text" placeholder="Nome do Produto" className="input-detail" value={nomeProduto} onChange={(e) => setNomeProduto(e.target.value)} disabled={fieldsDisabled} />
-            <input type="text" placeholder="Safra" className="input-detail" value={safra} onChange={(e) => setSafra(e.target.value)} disabled={fieldsDisabled} />
-            <input type="text" placeholder="País de Origem" className="input-detail" value={paisdeorigem} onChange={(e) => setPaisDeOrigem(e.target.value)} disabled={fieldsDisabled} />
-            <input type="text" placeholder="Tipo de Uva" className="input-detail" value={tipodeuva} onChange={(e) => setTipoDeUva(e.target.value)} disabled={fieldsDisabled} />
-            <input type="text" placeholder="Classificação" className="input-detail" value={classificacao} onChange={(e) => setClassificacao(e.target.value)} disabled={fieldsDisabled} />
-            <input type="text" placeholder="Preço" className="input-detail" value={preco} onChange={(e) => setPreco(e.target.value)} disabled={fieldsDisabled} />
-            <input type="text" placeholder="Estoque" className="input-detail" value={estoque} onChange={(e) => setEstoque(e.target.value)} disabled={fieldsDisabled} />
-            <input type="text" placeholder="Código de Barras" className="input-detail" value={codigodebarras} onChange={(e) => setCodigoDeBarras(e.target.value)} disabled={fieldsDisabled} />
-            <input type="text" placeholder="Temperatura" className="input-detail" value={temperatura} onChange={(e) => setTemperatura(e.target.value)} disabled={fieldsDisabled} />
-          </div>
-        </div>
+  <h3 className="text-lg mb-4">Detalhes do Produto</h3>
+
+  {/* Nome do Produto em uma linha só */}
+  <input
+    type="text"
+    placeholder="Nome do Produto"
+    className="input-detail mb-4 w-full"
+    value={nomeProduto}
+    onChange={(e) => setNomeProduto(e.target.value)}
+    disabled={fieldsDisabled}
+  />
+
+  {/* Restante dos detalhes do produto em grid */}
+  <div className="grid grid-cols-3 gap-4">
+    <input
+      type="text"
+      placeholder="Safra"
+      className="input-detail"
+      value={safra}
+      onChange={(e) => setSafra(e.target.value)}
+      disabled={fieldsDisabled}
+    />
+    <input
+      type="text"
+      placeholder="País de Origem"
+      className="input-detail"
+      value={paisdeorigem}
+      onChange={(e) => setPaisDeOrigem(e.target.value)}
+      disabled={fieldsDisabled}
+    />
+    <input
+      type="text"
+      placeholder="Tipo de Uva"
+      className="input-detail"
+      value={tipodeuva}
+      onChange={(e) => setTipoDeUva(e.target.value)}
+      disabled={fieldsDisabled}
+    />
+    <input
+      type="text"
+      placeholder="Classificação"
+      className="input-detail"
+      value={classificacao}
+      onChange={(e) => setClassificacao(e.target.value)}
+      disabled={fieldsDisabled}
+    />
+    <input
+      type="text"
+      placeholder="Preço"
+      className="input-detail"
+      value={preco}
+      onChange={(e) => setPreco(e.target.value)}
+      disabled={fieldsDisabled}
+    />
+    <input
+      type="text"
+      placeholder="Estoque"
+      className="input-detail"
+      value={estoque}
+      onChange={(e) => setEstoque(e.target.value)}
+      disabled={fieldsDisabled}
+    />
+    <input
+      type="text"
+      placeholder="Código de Barras"
+      className="input-detail"
+      value={codigodebarras}
+      onChange={(e) => setCodigoDeBarras(e.target.value)}
+      disabled={fieldsDisabled}
+    />
+    <input
+      type="text"
+      placeholder="Temperatura"
+      className="input-detail"
+      value={temperatura}
+      onChange={(e) => setTemperatura(e.target.value)}
+      disabled={fieldsDisabled}
+    />
+  </div>
+</div>
+
 
         <div className="products-actions mt-4">
           {isEditing ? (

@@ -171,7 +171,7 @@ const Estoque = () => {
               </div>
             ))}
             <button className="btn btn-add-product" onClick={handleAddProduct}>
-              <FaPlus /> Adicionar Produto
+              <FaPlus />  Adicionar Produto
             </button>
           </div>
         </div>

@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { FaArrowLeft, FaSearch, FaPlus, FaTrash, FaEdit } from "react-icons/fa";
 import axios from "axios";
 import InputMask from "react-input-mask";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import "./Cliente.css";
 
 const Cliente = () => {
@@ -18,6 +20,7 @@ const Cliente = () => {
   const [email, setEmail] = useState("");
   const [selectedClienteId, setSelectedClienteId] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(true); // Estado para controlar se os campos estão desabilitados
 
   useEffect(() => {
     axios
@@ -32,7 +35,6 @@ const Cliente = () => {
 
   const buscarClientes = () => {
     if (searchTerm.trim() === "") {
-      // Se o campo de pesquisa estiver vazio, busque todos os produtos
       axios
         .get("http://localhost:8080/api/cliente")
         .then((response) => {
@@ -42,19 +44,24 @@ const Cliente = () => {
           console.error("Erro ao buscar cliente:", error);
         });
     } else {
-      // Se houver termo de pesquisa, busque por nome
       axios
         .get(`http://localhost:8080/api/cliente/nome/${searchTerm}`)
         .then((response) => {
           setClientes(response.data);
         })
         .catch((error) => {
+          toast.error("Cliente inexsitente!");
           console.error("Erro ao buscar cliente pelo nome:", error);
         });
     }
   };
 
   const adicionarCliente = () => {
+    if (!nome || !cpf || !endereco || !numero || !bairro || !telefone || !email) {
+      toast.error("Por favor, preencha todos os campos.");
+      return;
+    }
+  
     const novoCliente = {
       nome,
       cpf,
@@ -64,16 +71,19 @@ const Cliente = () => {
       telefone,
       email,
     };
-
+  
     axios
       .post("http://localhost:8080/api/cliente", novoCliente)
       .then((response) => {
         setClientes([...clientes, response.data]);
         buscarClientes();
         limparCampos();
+        setIsDisabled(true); // Desabilitar os campos após salvar
+        toast.success("Cliente adicionado com sucesso!");
       })
       .catch((error) => {
         console.error("Erro ao adicionar cliente:", error);
+        toast.error("Erro ao adicionar cliente.");
       });
   };
 
@@ -98,10 +108,13 @@ const Cliente = () => {
         );
         buscarClientes();
         limparCampos();
+        setIsDisabled(true); // Desabilitar os campos após atualizar
         setIsEditing(false);
+        toast.success("Cliente atualizado com sucesso!");
       })
       .catch((error) => {
         console.error("Erro ao atualizar cliente:", error);
+        toast.error("Erro ao atualizar cliente.");
       });
   };
 
@@ -115,9 +128,11 @@ const Cliente = () => {
           )
         );
         buscarClientes();
+        toast.success("Status do cliente alterado com sucesso!");
       })
       .catch((error) => {
         console.error("Erro ao alterar o status do cliente:", error);
+        toast.error("Erro ao alterar status do cliente.");
       });
   };
 
@@ -131,9 +146,10 @@ const Cliente = () => {
     setTelefone(cliente.telefone);
     setEmail(cliente.email);
     setIsEditing(true);
+    setIsDisabled(false); // Habilitar os campos ao editar
   };
 
-  const limparCampos = () => {
+  const limparCampos = (manterHabilitados = false) => {
     setNome("");
     setCpf("");
     setEndereco("");
@@ -143,10 +159,16 @@ const Cliente = () => {
     setEmail("");
     setSelectedClienteId(null);
     setIsEditing(false);
+    
+    if (!manterHabilitados) {
+      setIsDisabled(true); // Desabilitar os campos após limpar, exceto se for para manter habilitado
+    }
   };
+  
 
   return (
     <div className="clientes-container">
+      <ToastContainer />
       <header className="clientes-header flex justify-between items-center p-6">
         <h1 className="text-xl font-bold">Administração de Clientes</h1>
         <div className="flex items-center space-x-4">
@@ -168,13 +190,14 @@ const Cliente = () => {
         <div className="flex items-center space-x-4">
           <button
             className="btn btn-add flex items-center"
-            onClick={adicionarCliente}
+            onClick={() => { setIsDisabled(false); limparCampos(true); }}
             disabled={isEditing}
           >
             <FaPlus className="mr-2" />
             Adicionar
           </button>
-          <button className="btn btn-back" onClick={() => navigate(-1)}>
+
+          <button className="btn btn-back" onClick={() => { navigate(-1) }}>
             Voltar
           </button>
         </div>
@@ -245,6 +268,7 @@ const Cliente = () => {
           </table>
         </div>
 
+        {/* Formulário de Dados do Cliente */}
         <div className="clientes-details mt-8">
           <h3 className="text-lg mb-4">Dados do Cliente</h3>
           <input
@@ -253,6 +277,7 @@ const Cliente = () => {
             className="input-detail mb-4 w-full"
             value={nome}
             onChange={(e) => setNome(e.target.value)}
+            disabled={isDisabled}
           />
           <div className="grid grid-cols-2 gap-4">
             <InputMask
@@ -261,6 +286,7 @@ const Cliente = () => {
               className="input-detail"
               value={cpf}
               onChange={(e) => setCpf(e.target.value)}
+              disabled={isDisabled}
             />
             <input
               type="text"
@@ -268,6 +294,7 @@ const Cliente = () => {
               className="input-detail"
               value={endereco}
               onChange={(e) => setEndereco(e.target.value)}
+              disabled={isDisabled}
             />
             <input
               type="text"
@@ -275,6 +302,7 @@ const Cliente = () => {
               className="input-detail"
               value={numero}
               onChange={(e) => setNumero(e.target.value)}
+              disabled={isDisabled}
             />
             <input
               type="text"
@@ -282,6 +310,7 @@ const Cliente = () => {
               className="input-detail"
               value={bairro}
               onChange={(e) => setBairro(e.target.value)}
+              disabled={isDisabled}
             />
             <InputMask
               mask="(99) 99999-9999"
@@ -289,6 +318,7 @@ const Cliente = () => {
               className="input-detail"
               value={telefone}
               onChange={(e) => setTelefone(e.target.value)}
+              disabled={isDisabled}
             />
             <input
               type="email"
@@ -296,8 +326,10 @@ const Cliente = () => {
               className="input-detail"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              disabled={isDisabled}
             />
           </div>
+
           <div className="flex justify-end mt-4">
             {isEditing ? (
               <button
@@ -311,18 +343,23 @@ const Cliente = () => {
               <button
                 className="btn btn-save flex items-center"
                 onClick={adicionarCliente}
-                disabled={isEditing}
               >
-                <FaPlus className="mr-2" />
+                <FaEdit className="mr-2" />
                 Salvar
               </button>
             )}
+            <button
+              className="btn btn-clear ml-4"
+              onClick={limparCampos}
+            >
+              Limpar
+            </button>
           </div>
         </div>
+
       </main>
     </div>
   );
 };
 
 export default Cliente;
-    

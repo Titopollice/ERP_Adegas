@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { FaArrowLeft, FaSearch, FaPlus, FaTrash, FaEdit } from "react-icons/fa";
 import axios from "axios";
 import InputMask from "react-input-mask";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import "./Usuario.css";
 
 const Usuario = () => {
@@ -19,7 +21,8 @@ const Usuario = () => {
   const [senha, setSenha] = useState("");
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  
+  const [isFieldsDisabled, setIsFieldsDisabled] = useState(true);
+
   useEffect(() => {
     axios
       .get("http://localhost:8080/api/usuario")
@@ -33,11 +36,10 @@ const Usuario = () => {
 
   const buscarUsuarios = () => {
     if (searchTerm.trim() === "") {
-      // Se o campo de pesquisa estiver vazio, busque todos os produtos
       axios
-        .get("http://localhost:8080/api/fornecedor")
+        .get("http://localhost:8080/api/usuario")
         .then((response) => {
-          setFornecedores(response.data);
+          setUsuarios(response.data);
         })
         .catch((error) => {
           console.error("Erro ao buscar fornecedor:", error);
@@ -45,28 +47,44 @@ const Usuario = () => {
     } else {
       // Se houver termo de pesquisa, busque por nome
       axios
-        .get(`http://localhost:8080/api/fornecedor/nome/${searchTerm}`)
+        .get(`http://localhost:8080/api/usuario/nome/${searchTerm}`)
         .then((response) => {
-          setFornecedores(response.data);
+          setUsuarios(response.data);
         })
         .catch((error) => {
+          toast.error("Usuario inexsitente!");
           console.error("Erro ao buscar fornecedor pelo nome:", error);
         });
     }
   };
 
   const formatarData = (data) => {
+    // Verifica se a data está no formato DD/MM/AAAA
     const dataSemMascara = data.replace(/[^0-9]/g, "");
     if (dataSemMascara.length === 8) {
-      const ano = dataSemMascara.substring(4, 8);
-      const mes = dataSemMascara.substring(2, 4);
       const dia = dataSemMascara.substring(0, 2);
-      return `${ano}-${mes}-${dia}`;
+      const mes = dataSemMascara.substring(2, 4);
+      const ano = dataSemMascara.substring(4, 8);
+      return `${ano}-${mes}-${dia}`; // Formato para salvar no banco
     }
     return data;
   };
 
+  const formatarDataParaInput = (data) => {
+    // Converte de AAAA-MM-DD para DD/MM/AAAA para o InputMask
+    const partes = data.split("-");
+    return `${partes[2]}/${partes[1]}/${partes[0]}`; // Formato DD/MM/AAAA
+  };
+
+
   const adicionarUsuario = () => {
+    setIsFieldsDisabled(false); 
+    
+    
+    if (!usuarioLogin || !nomeCompleto || !email || !telefone || !cpf || !cargo || !dataNascimento || !senha) {
+      toast.error("Por favor, preencha todos os campos.");
+      return;
+    }
     const novoUsuario = {
       usuarioLogin,
       nomeCompleto,
@@ -84,6 +102,8 @@ const Usuario = () => {
         setUsuarios([...usuarios, response.data]);
         buscarUsuarios();
         limparCampos();
+        setIsFieldsDisabled(true);
+        toast.success("Usuario adicionado com sucesso!"); // Desabilita os campos após adicionar o usuário
       })
       .catch((error) => {
         console.error("Erro ao adicionar usuário:", error);
@@ -110,14 +130,17 @@ const Usuario = () => {
             usuario.id === selectedUserId ? response.data : usuario
           )
         );
-        buscarUsuarios();            
+        buscarUsuarios();
         limparCampos();
-        setIsEditing(false); // Desativa o modo de edição após a atualização
+        setIsEditing(false);
+        setIsFieldsDisabled(true);
+        toast.success("Usuario atualizado com sucesso!"); // Desativa o modo de edição após a atualização
       })
       .catch((error) => {
         console.error("Erro ao atualizar usuário:", error);
       });
   };
+
 
   const excluirUsuario = (id) => {
     axios
@@ -129,17 +152,18 @@ const Usuario = () => {
             usuario.id === id ? { ...usuario, status: usuario.status === 'Ativo' ? 'Inativo' : 'Ativo' } : usuario
           )
         );
-        buscarUsuarios();
+        buscarUsuarios();7
+        toast.success("Status do usuario alterado com sucesso!");
       })
       .catch((error) => {
         console.error("Erro ao alterar o status do usuário:", error);
+        toast.error("Erro ao alterar status do cliente.");
       });
-      
+
   };
 
   const editarUsuario = (usuario) => {
-    console.log("Editando usuário com ID:", usuario.usuarioID); // Adicionado para depuração
-
+    // Preenche os campos com os dados do usuário selecionado
     setSelectedUserId(usuario.usuarioID);
     setLogin(usuario.usuarioLogin);
     setNomeCompleto(usuario.nomeCompleto);
@@ -149,10 +173,11 @@ const Usuario = () => {
     setCargo(usuario.cargo);
     setDataNascimento(usuario.dataNascimento);
     setSenha(usuario.senha);
-    setIsEditing(true); // Ativa o modo de edição ao clicar em Editar
-  };  
+    setIsEditing(true);
+    setIsFieldsDisabled(false); // Habilita os campos ao clicar em Editar
+  };
 
-  const limparCampos = () => {
+  const limparCampos = (manterHabilitados = false) => {
     setLogin("");
     setNomeCompleto("");
     setEmail("");
@@ -162,11 +187,16 @@ const Usuario = () => {
     setDataNascimento("");
     setSenha("");
     setSelectedUserId(null);
-    setIsEditing(false); // Desativa o modo de edição ao limpar campos
+    setIsFieldsDisabled(false);
+
+    if (!manterHabilitados) {
+      setIsFieldsDisabled(true); // Desabilitar os campos após limpar, exceto se for para manter habilitado
+    }
   };
 
   return (
     <div className="users-container">
+      <ToastContainer />
       <header className="users-header flex justify-between items-center p-6">
         <h1 className="text-xl font-bold">Administração de Sistema</h1>
         <div className="flex items-center space-x-4">
@@ -251,7 +281,7 @@ const Usuario = () => {
                         <FaTrash className="mr-2" />
                         {usuario.status === 'Ativo' ? 'Inativar' : 'Ativar'}
                       </button>
-                      
+
                     </td>
                   </tr>
                 ))
@@ -274,6 +304,7 @@ const Usuario = () => {
             className="input-detail mb-4 w-full"
             value={nomeCompleto}
             onChange={(e) => setNomeCompleto(e.target.value)}
+            disabled={isFieldsDisabled} // Desabilita o campo se necessário
           />
           <div className="grid grid-cols-2 gap-4">
             <InputMask
@@ -282,6 +313,7 @@ const Usuario = () => {
               className="input-detail"
               value={dataNascimento}
               onChange={(e) => setDataNascimento(e.target.value)}
+              disabled={isFieldsDisabled} // Desabilita o campo se necessário
             />
             <InputMask
               mask="(99) 99999-9999"
@@ -289,6 +321,7 @@ const Usuario = () => {
               className="input-detail"
               value={telefone}
               onChange={(e) => setTelefone(e.target.value)}
+              disabled={isFieldsDisabled} // Desabilita o campo se necessário
             />
             <input
               type="text"
@@ -296,13 +329,15 @@ const Usuario = () => {
               className="input-detail"
               value={cargo}
               onChange={(e) => setCargo(e.target.value)}
+              disabled={isFieldsDisabled} // Desabilita o campo se necessário
             />
-            <input
-              type="text"
+            <InputMask
+              mask="999.999.999-99"
               placeholder="CPF"
               className="input-detail"
               value={cpf}
               onChange={(e) => setCpf(e.target.value)}
+              disabled={isFieldsDisabled} // Desabilita o campo se necessário
             />
             <input
               type="text"
@@ -310,6 +345,7 @@ const Usuario = () => {
               className="input-detail"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              disabled={isFieldsDisabled} // Desabilita o campo se necessário
             />
             <input
               type="text"
@@ -317,6 +353,7 @@ const Usuario = () => {
               className="input-detail"
               value={usuarioLogin}
               onChange={(e) => setLogin(e.target.value)}
+              disabled={isFieldsDisabled} // Desabilita o campo se necessário
             />
             <input
               type="password"
@@ -324,31 +361,23 @@ const Usuario = () => {
               className="input-detail"
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
+              disabled={isFieldsDisabled} // Desabilita o campo se necessário
             />
           </div>
 
           <div className="users-actions mt-8 flex justify-between">
             {isEditing ? (
               <>
-                <button
-                  className="btn btn-update"
-                  onClick={atualizarUsuario}
-                >
+                <button className="btn btn-update" onClick={atualizarUsuario}>
                   Atualizar
                 </button>
-                <button
-                  className="btn btn-clear flex items-center"
-                  onClick={limparCampos}
-                >
+                <button className="btn btn-clear flex items-center" onClick={limparCampos}>
                   <FaTrash className="mr-2" />
                   Limpar
                 </button>
               </>
             ) : (
-              <button
-                className="btn btn-save"
-                onClick={adicionarUsuario}
-              >
+              <button className="btn btn-save" onClick={adicionarUsuario}>
                 Salvar
               </button>
             )}

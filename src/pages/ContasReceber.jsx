@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaSearch, FaPlus, FaSave } from 'react-icons/fa';
 import axios from 'axios';
-import './ContasPagar.css';
+import './ContasReceber.css';
 
 const ContasPagar = () => {
   const navigate = useNavigate();

@@ -75,7 +75,7 @@ const Vendas = () => {
       dataVenda: new Date().toISOString().split('T')[0], // Formato YYYY-MM-DD
       totalVenda: parseFloat(totalVenda),
       desconto: parseFloat(desconto),
-      usuario_usuarioID: 29, // Mude conforme necessário
+      usuario_usuarioID: 31, // Mude conforme necessário
       items: vendas.map(item => ({
         produtoID: item.produtoID,
         quantidade: item.quantidade,

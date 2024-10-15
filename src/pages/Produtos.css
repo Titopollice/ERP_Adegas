@@ -33,6 +33,7 @@
   cursor: pointer;
   display: flex;
   align-items: center;
+  background-color: #f6ff00;
 }
 
 .btn-add {
@@ -59,11 +60,11 @@
 .products-actions {
   display: flex;
   justify-content: space-between;
-  /* Distribui os botões ao longo do eixo principal */
+  
   align-items: center;
-  /* Alinha os itens no centro verticalmente */
+  
   margin-top: 1rem;
-  /* Espaço acima do container */
+ 
 }
 
 .products-table thead th {

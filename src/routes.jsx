@@ -18,8 +18,8 @@ import Cliente from "./pages/Cliente";
 import ResetPassword from "./pages/ResetPassword"; // Importe o componente de redefinição
 const AppRoutes = () => (
   <Routes>
-    <Route path="/login" element={<Login />} />
-    <Route path="/" element={<Home />} />
+    <Route path="/Home" element={<Home />} />
+    <Route path="/" element={<Login/>} />
     <Route path="/vendas" element={<Vendas />} />
     <Route path="/produtos" element={<Produtos />} />
     <Route path="/usuario" element={<Usuario />} />

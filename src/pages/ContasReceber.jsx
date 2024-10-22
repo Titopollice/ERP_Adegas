@@ -31,7 +31,9 @@ const ContasReceber = () => {
     try {
       const response = await fetch('http://localhost:8080/api/receber');
       const data = await response.json();
-      setContas(data);
+      // Ordena as contas por ID
+      const contasOrdenadas = data.sort((a, b) => a.contaID - b.contaID);
+      setContas(contasOrdenadas);
     } catch (error) {
       console.error('Erro ao buscar contas:', error);
       toast.error('Erro ao buscar contas.'); 
@@ -86,10 +88,10 @@ const ContasReceber = () => {
       });
 
       if (!respostaConta.ok) {
-        throw new Error('Erro ao salvar a conta a pagar');
+        throw new Error('Erro ao salvar a conta a receber');
       }
 
-      toast.success('Conta a pagar e parcelas salvas com sucesso!');
+      toast.success('Conta a receber e parcelas salvas com sucesso!');
       fetchContas(); // Recarrega as contas após salvar
       setParcelas([]); // Limpa as parcelas após salvar a conta
       limparCampos(); // Limpa os campos da conta
@@ -108,6 +110,8 @@ const ContasReceber = () => {
     setDataVencimento('');
     setNumeroParcelas(1);
     setParcelas([]); // Limpa as parcelas também
+    setActiveTab('conta'); // Muda para a aba 'conta'
+    toast.info('Campos limpos e retornado para a aba Conta');
   };
 
   // Função para excluir uma conta
@@ -126,7 +130,13 @@ const ContasReceber = () => {
     }
   };
 
-  const handleBaixaParcela = async (parcelaID) => {
+  const handleBaixaParcela = async (parcelaID, contaID) => {
+    if (!parcelaID) {
+      console.error('parcelaID é undefined');
+      toast.error('Erro: ID da parcela não definido');
+      return;
+    }
+
     try {
       const response = await fetch(`http://localhost:8080/api/receber/parcelas/${parcelaID}/status`, {
         method: 'PATCH',
@@ -149,6 +159,17 @@ const ContasReceber = () => {
         });
         setParcelas(novasParcelas);
         toast.success('Parcela baixada com sucesso!');
+
+        // Verifica se todas as parcelas foram baixadas
+        const todasBaixadas = novasParcelas.every(parcela => parcela.status === 'Baixada');
+        if (todasBaixadas) {
+          // Atualiza o status da conta para "Concluído"
+          await atualizarStatusConta(contaID, 'Concluído');
+          toast.success('Todas as parcelas foram baixadas. Conta marcada como concluída.');
+        }
+
+        // Atualiza a lista de contas
+        fetchContas();
       } else {
         console.error('Erro ao atualizar o status da parcela:', await response.text());
         toast.error('Erro ao atualizar o status da parcela.');
@@ -164,14 +185,19 @@ const ContasReceber = () => {
     try {
       const response = await fetch(`http://localhost:8080/api/receber/${contaID}/parcelas`);
 
-      // Verifica se a resposta não é ok
       if (!response.ok) {
-        const errorText = await response.text(); // Obter o texto da resposta de erro
+        const errorText = await response.text();
         throw new Error(`Erro ao buscar parcelas da conta: ${errorText}`);
       }
 
       const data = await response.json();
-      setParcelas(data);
+      // Adiciona o contaID e verifica se cada parcela tem um parcelaID
+      const parcelasComIDs = data.map(parcela => ({
+        ...parcela,
+        contaID,
+        parcelaID: parcela.parcelaID || parcela.id // Assume que o ID da parcela pode estar em 'parcelaID' ou 'id'
+      }));
+      setParcelas(parcelasComIDs);
       setActiveTab('parcelas');
     } catch (error) {
       console.error('Erro ao dar baixa:', error);
@@ -179,6 +205,30 @@ const ContasReceber = () => {
     }
   };
 
+  const atualizarStatusConta = async (contaID, novoStatus) => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/receber/${contaID}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: novoStatus }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Erro ao atualizar o status da conta: ${errorText}`);
+      }
+
+      const result = await response.json();
+      console.log(`Status da conta ${contaID} atualizado para ${novoStatus}`);
+      return result;
+    } catch (error) {
+      console.error('Erro ao atualizar o status da conta:', error);
+      toast.error('Erro ao atualizar o status da conta.');
+      throw error;
+    }
+  };
 
   return (
     <div className="accounts-payable-container">
@@ -242,7 +292,7 @@ const ContasReceber = () => {
         {/* Detalhes para nova conta */}
         {activeTab === 'conta' && (
           <div className="accounts-payable-details mt-8">
-            <h3 className="text-lg mb-4">Nova Conta a Pagar</h3>
+            <h3 className="text-lg mb-4">Nova Conta a Receber</h3>
             <div className="grid grid-cols-2 gap-4">
               <input
                 type="text"
@@ -309,7 +359,7 @@ const ContasReceber = () => {
                       {parcela.status === 'Pendente' && (
                         <button
                           className="btn-action"
-                          onClick={() => handleBaixaParcela(parcela.parcelaID)}
+                          onClick={() => handleBaixaParcela(parcela.parcelaID, parcela.contaID)}
                         >
                           Dar Baixa
                         </button>

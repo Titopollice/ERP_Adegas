@@ -15,22 +15,107 @@ import RelatorioPagar from "./pages/RelatorioPagar";
 import RelatorioEstoque from "./pages/RelatorioEstoque";
 import RelatorioReceber from "./pages/RelatorioReceber";
 import Cliente from "./pages/Cliente";
-import ResetPassword from "./pages/ResetPassword"; // Importe o componente de redefinição
+import ResetPassword from "./pages/ResetPassword";
+import ProtectedRoute from './pages/ProtectedRoute'; // Importe o componente de rota protegida
+
 const AppRoutes = () => (
   <Routes>
+    <Route path="/" element={<Login />} />
     <Route path="/Home" element={<Home />} />
-    <Route path="/" element={<Login/>} />
-    <Route path="/vendas" element={<Vendas />} />
-    <Route path="/produtos" element={<Produtos />} />
-    <Route path="/usuario" element={<Usuario />} />
-    <Route path="/fornecedor" element={<Fornecedor />} />
-    <Route path="/contasReceber" element={<ContasReceber />} />
-    <Route path="/ContasPagar" element={<ContasPagar />} />
-    <Route path="/estoque" element={<Estoque />} />
-    <Route path="/relatorioVendas" element={<RelatorioVendas />} />
-    <Route path="/relatorioPagar" element={<RelatorioPagar />} />
-    <Route path="/relatorioEstoque" element={<RelatorioEstoque />} />
-    <Route path="/relatorioReceber" element={<RelatorioReceber />} />
+    
+    {/* Rota protegida para Vendas */}
+    <Route
+      path="/vendas"
+      element={
+        <ProtectedRoute>
+          <Vendas />
+        </ProtectedRoute>
+      }
+    />
+    
+    {/* Outras rotas que precisam ser protegidas */}
+    <Route
+      path="/produtos"
+      element={
+        <ProtectedRoute>
+          <Produtos />
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/usuario"
+      element={
+        <ProtectedRoute>
+          <Usuario />
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/fornecedor"
+      element={
+        <ProtectedRoute>
+          <Fornecedor />
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/contasReceber"
+      element={
+        <ProtectedRoute>
+          <ContasReceber />
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/ContasPagar"
+      element={
+        <ProtectedRoute>
+          <ContasPagar />
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/estoque"
+      element={
+        <ProtectedRoute>
+          <Estoque />
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/relatorioVendas"
+      element={
+        <ProtectedRoute>
+          <RelatorioVendas />
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/relatorioPagar"
+      element={
+        <ProtectedRoute>
+          <RelatorioPagar />
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/relatorioEstoque"
+      element={
+        <ProtectedRoute>
+          <RelatorioEstoque />
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/relatorioReceber"
+      element={
+        <ProtectedRoute>
+          <RelatorioReceber />
+        </ProtectedRoute>
+      }
+    />
+    
+    {/* Rotas não protegidas */}
     <Route path="/cliente" element={<Cliente />} />
     <Route path="/reset-password/:token" element={<ResetPassword />} />
   </Routes>

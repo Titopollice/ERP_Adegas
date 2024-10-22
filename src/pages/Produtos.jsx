@@ -23,9 +23,14 @@ const Produtos = () => {
   const [selectedProductId, setSelectedProductId] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [fieldsDisabled, setFieldsDisabled] = useState(true);
+  const [userName, setUserName] = useState(""); 
 
   useEffect(() => {
     buscarProdutos();
+    const loggedInUser = localStorage.getItem("userName"); // Pega do localStorage
+    if (loggedInUser) {
+      setUserName(loggedInUser); // Define o nome do usuário no estado
+    }
   }, []);
 
   const buscarProdutos = () => {
@@ -167,10 +172,10 @@ const Produtos = () => {
       <header className="products-header flex justify-between items-center p-6">
         <h1 className="text-xl font-bold">Estoque</h1>
         <div className="flex items-center space-x-4">
-          <span>Tiago Oliveira da Silva</span>
+        <span className="text-whrite-800">{userName}</span> 
           <div className="flex items-center space-x-2">
             <FaArrowLeft onClick={() => navigate(-1)} className="text-lg cursor-pointer" title="Voltar" />
-            <FaUserCircle className="text-lg" />
+            
           </div>
         </div>
       </header>
@@ -329,7 +334,7 @@ const Produtos = () => {
               Salvar
             </button>
           )}
-          <button className="btn btn-clear ml-4" onClick={limparCampos}>Limpar</button>
+          <button className="btn-clear ml-4" onClick={limparCampos}>Limpar</button>
         </div>
       </main>
     </div>

@@ -28,7 +28,8 @@ const Login = () => {
       );
       const { token, nomeUsuario } = response.data;
       localStorage.setItem("token", token);
-      localStorage.setItem("userName", nomeUsuario); // Nome da chave consistente
+      localStorage.setItem("userName", nomeUsuario);
+      localStorage.setItem("userId", response.data.idUsuario); // Nome da chave consistente
       window.location.href = "/home"; // Redireciona para a página inicial
     } catch (error) {
       if (error.response) {

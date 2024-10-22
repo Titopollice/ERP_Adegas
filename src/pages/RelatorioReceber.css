@@ -41,3 +41,43 @@
     opacity: 0.8;
   }
   
+  .table-container {
+    max-height: 400px; /* Altura máxima antes de adicionar a barra de rolagem */
+    overflow-y: auto; /* Adiciona barra de rolagem vertical quando necessário */
+  }
+
+  .generated-report-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .generated-report-table th,
+  .generated-report-table td {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+  }
+
+  .generated-report-table thead {
+    position: sticky;
+    top: 0;
+    background-color: #f2f2f2;
+    z-index: 1;
+  }
+
+  /* Estiliza a barra de rolagem para navegadores WebKit (Chrome, Safari, etc.) */
+  .table-container::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .table-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  .table-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+  }
+
+  .table-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }

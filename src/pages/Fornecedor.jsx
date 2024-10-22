@@ -19,6 +19,7 @@ const Fornecedor = () => {
   const [email, setEmail] = useState("");
   const [selectedFornecedorId, setSelectedFornecedorId] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [userName, setUserName] = useState(""); 
 
   useEffect(() => {
     axios
@@ -29,6 +30,10 @@ const Fornecedor = () => {
       .catch((error) => {
         console.error("Erro ao buscar fornecedores:", error);
       });
+      const loggedInUser = localStorage.getItem("userName"); // Pega do localStorage
+    if (loggedInUser) {
+      setUserName(loggedInUser); // Define o nome do usuário no estado
+    }
   }, []);
 
   const buscarFornecedores = () => {
@@ -155,7 +160,7 @@ const Fornecedor = () => {
       <header className="suppliers-header flex justify-between items-center p-6">
         <h1 className="text-xl font-bold">Administração de Fornecedores</h1>
         <div className="flex items-center space-x-4">
-          <span>Tiago Oliveira da Silva</span>
+        <span className="text-whrite-800">{userName}</span> 
           <div className="flex items-center space-x-2">
             <FaArrowLeft
               onClick={() => navigate(-1)}

@@ -20,7 +20,8 @@ const Cliente = () => {
   const [email, setEmail] = useState("");
   const [selectedClienteId, setSelectedClienteId] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [isDisabled, setIsDisabled] = useState(true); // Estado para controlar se os campos estão desabilitados
+  const [isDisabled, setIsDisabled] = useState(true);
+  const [userName, setUserName] = useState("");  // Estado para controlar se os campos estão desabilitados
 
   useEffect(() => {
     axios
@@ -31,6 +32,10 @@ const Cliente = () => {
       .catch((error) => {
         console.error("Erro ao buscar clientes:", error);
       });
+      const loggedInUser = localStorage.getItem("userName"); // Pega do localStorage
+    if (loggedInUser) {
+      setUserName(loggedInUser); // Define o nome do usuário no estado
+    }
   }, []);
 
   const buscarClientes = () => {
@@ -172,7 +177,7 @@ const Cliente = () => {
       <header className="clientes-header flex justify-between items-center p-6">
         <h1 className="text-xl font-bold">Administração de Clientes</h1>
         <div className="flex items-center space-x-4">
-          <span>Tiago Oliveira da Silva</span>
+        <span className="text-whrite-800">{userName}</span> 
           <div className="flex items-center space-x-2">
             <FaArrowLeft
               onClick={() => navigate(-1)}

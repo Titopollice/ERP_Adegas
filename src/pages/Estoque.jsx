@@ -12,13 +12,17 @@ const Estoque = () => {
   const [selectedFornecedor, setSelectedFornecedor] = useState('');
   const [selectedProducts, setSelectedProducts] = useState([{ produtoID: '', quantidade: '' }]);
   const [dataMovimentacao, setDataMovimentacao] = useState(new Date().toISOString().slice(0, 10)); // Data atual
-
+  const [userName, setUserName] = useState(""); 
   // Função para buscar fornecedores e produtos na API
   useEffect(() => {
     const fetchFornecedores = async () => {
       const response = await fetch('http://localhost:8080/api/fornecedor');
       const data = await response.json();
       setFornecedores(data);
+      const loggedInUser = localStorage.getItem("userName"); // Pega do localStorage
+      if (loggedInUser) {
+      setUserName(loggedInUser); // Define o nome do usuário no estado
+    }
     };
 
     const fetchProdutos = async () => {
@@ -104,7 +108,7 @@ const Estoque = () => {
       <header className="product-entry-header flex justify-between items-center p-6">
         <h1 className="text-xl font-bold">Entrada de Produtos</h1>
         <div className="flex items-center space-x-4">
-          <span>Tiago Oliveira da Silva</span>
+        <span className="text-whrite-800">{userName}</span> 
           <div className="flex items-center space-x-2">
             <FaArrowLeft onClick={() => navigate(-1)} className="text-lg cursor-pointer" title="Voltar" />
           </div>

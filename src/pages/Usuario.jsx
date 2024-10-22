@@ -22,6 +22,7 @@ const Usuario = () => {
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isFieldsDisabled, setIsFieldsDisabled] = useState(true);
+  const [userName, setUserName] = useState("");
 
   useEffect(() => {
     axios
@@ -32,6 +33,10 @@ const Usuario = () => {
       .catch((error) => {
         console.error("Erro ao buscar usuários:", error);
       });
+    const loggedInUser = localStorage.getItem("userName"); // Pega do localStorage
+    if (loggedInUser) {
+      setUserName(loggedInUser); // Define o nome do usuário no estado
+    }
   }, []);
 
   const buscarUsuarios = () => {
@@ -76,11 +81,14 @@ const Usuario = () => {
     return `${partes[2]}/${partes[1]}/${partes[0]}`; // Formato DD/MM/AAAA
   };
 
+  const adicionarUsuario1 = () => {
+    setIsFieldsDisabled(false);
+  };
 
   const adicionarUsuario = () => {
-    setIsFieldsDisabled(false); 
-    
-    
+    setIsFieldsDisabled(false);
+
+
     if (!usuarioLogin || !nomeCompleto || !email || !telefone || !cpf || !cargo || !dataNascimento || !senha) {
       toast.error("Por favor, preencha todos os campos.");
       return;
@@ -152,7 +160,7 @@ const Usuario = () => {
             usuario.id === id ? { ...usuario, status: usuario.status === 'Ativo' ? 'Inativo' : 'Ativo' } : usuario
           )
         );
-        buscarUsuarios();7
+        buscarUsuarios(); 7
         toast.success("Status do usuario alterado com sucesso!");
       })
       .catch((error) => {
@@ -197,16 +205,13 @@ const Usuario = () => {
   return (
     <div className="users-container">
       <ToastContainer />
-      <header className="users-header flex justify-between items-center p-6">
-        <h1 className="text-xl font-bold">Administração de Sistema</h1>
+      <header className="products-header flex justify-between items-center p-6">
+        <h1 className="text-xl font-bold">Estoque</h1>
         <div className="flex items-center space-x-4">
-          <span>Tiago Oliveira da Silva</span>
+          <span className="text-whrite-800">{userName}</span>
           <div className="flex items-center space-x-2">
-            <FaArrowLeft
-              onClick={() => navigate(-1)}
-              className="text-lg cursor-pointer"
-              title="Voltar"
-            />
+            <FaArrowLeft onClick={() => navigate(-1)} className="text-lg cursor-pointer" title="Voltar" />
+
           </div>
         </div>
       </header>
@@ -218,7 +223,7 @@ const Usuario = () => {
         <div className="flex items-center space-x-4">
           <button
             className="btn btn-add flex items-center"
-            onClick={adicionarUsuario}
+            onClick={adicionarUsuario1}
             disabled={isEditing} // Desabilita o botão "Adicionar" se estiver editando
           >
             <FaPlus className="mr-2" />

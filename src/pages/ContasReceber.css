@@ -1,59 +1,145 @@
-/* src/pages/AccountsReceivable.css */
-.accounts-receivable-container {
-    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-    min-height: 100vh;
-    background-color: #f4f6f9;
-  }
+/* src/pages/AccountsPayable.css */
+.accounts-payable-container {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  min-height: 100vh;
+  background-color: #f4f6f9;
+}
+
+.accounts-payable-header, .accounts-payable-nav {
+  background-color: #001a33;
+  color: white;
+  padding: 20px; /* Adicionando padding para o cabeçalho */
+}
+
+.tabs-container {
+  margin: 20px 0; /* Reduzindo o espaço vertical */
+}
+
+.tab-button {
+  padding: 10px 20px;
+  margin-right: 10px;
+  cursor: pointer;
+  border: none;
+  background-color: #001a33;
+  color: white;
+  transition: background-color 0.3s; /* Adicionando transição para feedback visual */
+}
+
+.tab-button:hover {
+  background-color: #001623; /* Efeito hover */
+}
+
+.tab-button.active {
+  background-color: #001623;
+}
+
+.accounts-payable-main {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px; /* Adicionando padding ao conteúdo principal */
+}
+
+.input-detail {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 10px; /* Adicionando margem inferior para espaçamento */
+}
+
+.button-generate, .btn-save {
+  background-color: #28a745;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s; /* Transição para feedback visual */
+}
+
+.btn-save {
+  background-color: #000000;
+}
+
+.btn-save:hover, .button-generate:hover {
+  opacity: 0.8; /* Efeito hover para os botões */
+}
+
+.table-header {
+  background-color: #002338;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 1;
   
-  .accounts-receivable-header, .accounts-receivable-nav {
-    background-color: #001a33;
-    color: white;
-  }
+}
+
+.table-row {
+  background-color: #f9f9f9;
+  text-align: center;
+}
+
+.table-row:nth-child(even) {
+  background-color: #eaeaea;
   
-  .accounts-receivable-nav {
-    border-bottom: 1px solid #ccc;
-  }
-  
-  .accounts-receivable-main {
-    padding: 1.5rem;
-    background-color: white;
-  }
-  
-  .input-search, .input-detail {
-    border: 1px solid #ccc;
-    padding: 0.5rem;
-    border-radius: 4px;
-  }
-  
-  .btn {
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-  }
-  
-  .btn-add {
-    background-color: #007bff;
-    color: white;
-  }
-  
-  .btn-back, .btn-save {
-    background-color: #28a745;
-    color: white;
-  }
-  
-  .btn-delete {
-    background-color: #dc3545;
-    color: white;
-  }
-  
-  .btn-check {
-    background-color: #ffc107;
-    color: white;
-  }
-  
-  .btn:hover {
-    opacity: 0.8;
-  }
-  
+}
+
+.table-container {
+  max-height: 500px; /* Define a altura máxima da tabela */
+  overflow-y: auto;
+  position: relative; /* Habilita a rolagem vertical */
+}
+  .btn-action {
+  background-color: #4CAF50; /* Cor de fundo */
+  color: white; /* Cor do texto */
+  padding: 8px 12px; /* Espaçamento interno */
+  border: none; /* Sem borda */
+  border-radius: 4px; /* Bordas arredondadas */
+  cursor: pointer; /* Cursor em forma de mão */
+  margin-right: 5px; /* Espaçamento entre os botões */
+}
+
+.btn-action:hover {
+  background-color: #45a049; /* Cor de fundo ao passar o mouse */
+}
+
+.btn-action.text-red-500 {
+  background-color: #f1e90d;
+  color: #000000; /* Cor de fundo para excluir */
+}
+
+.btn-action.text-red-500:hover {
+  background-color: #e53935; /* Cor de fundo ao passar o mouse para excluir */
+}
+/* Estilo para a lista de parcelas */
+.parcelas-list {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0; /* Margem vertical */
+}
+
+.parcelas-list li {
+  padding: 10px;
+  border: 1px solid #ddd; /* Borda para cada item */
+  margin-bottom: 5px; /* Espaçamento entre os itens */
+  border-radius: 4px; /* Arredondando os cantos */
+}
+.btn-clear {
+  background-color: #d41414;
+  border: 1px solid #ccc;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.btn-clear:hover {
+  background-color: #ddd;
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-between; /* Faz com que os botões se alinhem nos extremos esquerdo e direito */
+  margin-top: 20px;
+}

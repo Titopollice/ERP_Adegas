@@ -31,7 +31,7 @@ const ResetPassword = () => {
 
       setMessage("Senha redefinida com sucesso!");
       setTimeout(() => {
-        navigate("/login"); // Redireciona para a página de login após sucesso
+        navigate("/"); // Redireciona para a página de login após sucesso
       }, 2000);
     } catch (error) {
       console.error(

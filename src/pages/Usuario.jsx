@@ -206,7 +206,7 @@ const Usuario = () => {
     <div className="users-container">
       <ToastContainer />
       <header className="products-header flex justify-between items-center p-6">
-        <h1 className="text-xl font-bold">Estoque</h1>
+        <h1 className="text-xl font-bold">Usuario</h1>
         <div className="flex items-center space-x-4">
           <span className="text-whrite-800">{userName}</span>
           <div className="flex items-center space-x-2">

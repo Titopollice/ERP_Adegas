@@ -23,7 +23,6 @@ const Usuario = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isFieldsDisabled, setIsFieldsDisabled] = useState(true);
   const [userName, setUserName] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     axios
@@ -217,63 +216,17 @@ const Usuario = () => {
     }
   };
 
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
-
   return (
     <div className="users-container">
       <ToastContainer />
-      <header className="users-header flex justify-between items-center p-6">
-        <h1 className="text-xl font-bold">Usuários</h1>
+      <header className="products-header flex justify-between items-center p-6">
+        <h1 className="text-xl font-bold">Estoque</h1>
         <div className="flex items-center space-x-4">
-          <div className="relative inline-block text-left">
-            <button
-              id="dropdownButton"
-              onClick={toggleDropdown}
-              type="button"
-              className="inline-flex items-center space-x-2 bg-white text-sm font-medium text-gray-700 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-            >
-              <span>{userName}</span>
-              <svg
-                className="h-5 w-5 text-gray-400"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </button>
+          <span className="text-whrite-800">{userName}</span>
+          <div className="flex items-center space-x-2">
+            <FaArrowLeft onClick={() => navigate(-1)} className="text-lg cursor-pointer" title="Voltar" />
 
-            {isOpen && (
-              <div
-                className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
-                role="menu"
-                aria-orientation="vertical"
-                aria-labelledby="menu-button"
-                tabIndex="-1"
-              >
-                <div className="py-1" role="none">
-                  <a
-                    href="/"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    role="menuitem"
-                    onClick={() => {
-                      localStorage.removeItem("userName");
-                    }}
-                  >
-                    Sair
-                  </a>
-                </div>
-              </div>
-            )}
           </div>
-          <FaArrowLeft onClick={() => navigate(-1)} className="text-lg cursor-pointer" title="Voltar" />
         </div>
       </header>
 

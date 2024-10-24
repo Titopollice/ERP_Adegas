@@ -23,6 +23,7 @@ const Usuario = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isFieldsDisabled, setIsFieldsDisabled] = useState(true);
   const [userName, setUserName] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     axios
@@ -88,33 +89,47 @@ const Usuario = () => {
   const adicionarUsuario = () => {
     setIsFieldsDisabled(false);
 
-
     if (!usuarioLogin || !nomeCompleto || !email || !telefone || !cpf || !cargo || !dataNascimento || !senha) {
       toast.error("Por favor, preencha todos os campos.");
       return;
     }
-    const novoUsuario = {
-      usuarioLogin,
-      nomeCompleto,
-      email,
-      telefone,
-      cpf,
-      cargo,
-      dataNascimento: formatarData(dataNascimento),
-      senha,
-    };
 
-    axios
-      .post("http://localhost:8080/api/usuario", novoUsuario)
+    // Primeiro, verificamos se já existe um usuário com o mesmo nome
+    axios.get(`http://localhost:8080/api/usuario/nome/${nomeCompleto}`)
       .then((response) => {
-        setUsuarios([...usuarios, response.data]);
-        buscarUsuarios();
-        limparCampos();
-        setIsFieldsDisabled(true);
-        toast.success("Usuario adicionado com sucesso!"); // Desabilita os campos após adicionar o usuário
+        if (response.data.length > 0) {
+          // Se encontrou algum usuário, mostra a mensagem de erro
+          toast.error("Já existe um usuário com este nome. Por favor, escolha outro nome.");
+        } else {
+          // Se não encontrou, prossegue com o cadastro
+          const novoUsuario = {
+            usuarioLogin,
+            nomeCompleto,
+            email,
+            telefone,
+            cpf,
+            cargo,
+            dataNascimento: formatarData(dataNascimento),
+            senha,
+          };
+
+          axios.post("http://localhost:8080/api/usuario", novoUsuario)
+            .then((response) => {
+              setUsuarios([...usuarios, response.data]);
+              buscarUsuarios();
+              limparCampos();
+              setIsFieldsDisabled(true);
+              toast.success("Usuário adicionado com sucesso!");
+            })
+            .catch((error) => {
+              console.error("Erro ao adicionar usuário:", error);
+              toast.error("Erro ao adicionar usuário. Por favor, tente novamente.");
+            });
+        }
       })
       .catch((error) => {
-        console.error("Erro ao adicionar usuário:", error);
+        console.error("Erro ao verificar usuário existente:", error);
+        toast.error("Erro ao verificar usuário existente. Por favor, tente novamente.");
       });
   };
 
@@ -202,17 +217,63 @@ const Usuario = () => {
     }
   };
 
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
+
   return (
     <div className="users-container">
       <ToastContainer />
-      <header className="products-header flex justify-between items-center p-6">
-        <h1 className="text-xl font-bold">Estoque</h1>
+      <header className="users-header flex justify-between items-center p-6">
+        <h1 className="text-xl font-bold">Usuários</h1>
         <div className="flex items-center space-x-4">
-          <span className="text-whrite-800">{userName}</span>
-          <div className="flex items-center space-x-2">
-            <FaArrowLeft onClick={() => navigate(-1)} className="text-lg cursor-pointer" title="Voltar" />
+          <div className="relative inline-block text-left">
+            <button
+              id="dropdownButton"
+              onClick={toggleDropdown}
+              type="button"
+              className="inline-flex items-center space-x-2 bg-white text-sm font-medium text-gray-700 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            >
+              <span>{userName}</span>
+              <svg
+                className="h-5 w-5 text-gray-400"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </button>
 
+            {isOpen && (
+              <div
+                className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+                role="menu"
+                aria-orientation="vertical"
+                aria-labelledby="menu-button"
+                tabIndex="-1"
+              >
+                <div className="py-1" role="none">
+                  <a
+                    href="/"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    role="menuitem"
+                    onClick={() => {
+                      localStorage.removeItem("userName");
+                    }}
+                  >
+                    Sair
+                  </a>
+                </div>
+              </div>
+            )}
           </div>
+          <FaArrowLeft onClick={() => navigate(-1)} className="text-lg cursor-pointer" title="Voltar" />
         </div>
       </header>
 

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';  
 import { useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaSearch, FaPlus, FaTrash } from 'react-icons/fa';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './Estoque.css'; // Importação do CSS padrão para estilos
 
 const Estoque = () => {
@@ -57,7 +59,7 @@ const Estoque = () => {
   // Função para salvar o cadastro com o fornecedor e os produtos vinculados
   const handleSave = async () => {
     if (!selectedFornecedor) {
-      alert("Por favor, selecione um fornecedor.");
+      toast.warn("Por favor, selecione um fornecedor.");
       return;
     }
 
@@ -66,17 +68,16 @@ const Estoque = () => {
     );
 
     if (hasEmptyProduct) {
-      alert("Por favor, preencha todos os campos de produto e quantidade.");
+      toast.warn("Por favor, preencha todos os campos de produto e quantidade.");
       return;
     }
 
-    // Itera sobre os produtos selecionados e faz uma requisição POST para cada produto
     for (const product of selectedProducts) {
       const payload = {
-        quantidade: product.quantidade,
-        DataDaMovimentacao: dataMovimentacao, // Nome do campo no backend
-        Produto_produtoID: product.produtoID, // Nome do campo no backend
-        IdFornecedor: selectedFornecedor // Nome do campo no backend
+        quantidade: parseInt(product.quantidade),
+        DataDaMovimentacao: dataMovimentacao,
+        Produto_produtoID: parseInt(product.produtoID),
+        IdFornecedor: parseInt(selectedFornecedor)
       };
 
       try {
@@ -88,23 +89,26 @@ const Estoque = () => {
 
         if (!response.ok) {
           const errorData = await response.json();
-          alert(`Erro ao salvar: ${errorData.error}`);
-          return;
+          throw new Error(errorData.error || 'Erro desconhecido ao salvar');
         }
+
+        const data = await response.json();
+        toast.success('Entrada de estoque registrada com sucesso!');
       } catch (error) {
         console.error('Erro ao salvar a entrada de estoque:', error);
-        alert('Erro ao salvar a entrada de estoque.');
+        toast.error(`Erro ao registrar entrada de estoque: ${error.message}`);
         return;
       }
     }
 
-    alert('Entrada de estoque salva com sucesso!');
-    setSelectedProducts([{ produtoID: '', quantidade: '' }]); // Limpa os campos
-    setSelectedFornecedor(''); // Reseta fornecedor
+    toast.success('Todas as entradas de estoque foram registradas com sucesso!');
+    setSelectedProducts([{ produtoID: '', quantidade: '' }]);
+    setSelectedFornecedor('');
   };
 
   return (
     <div className="product-entry-container">
+      <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
       <header className="product-entry-header flex justify-between items-center p-6">
         <h1 className="text-xl font-bold">Entrada de Produtos</h1>
         <div className="flex items-center space-x-4">
@@ -116,12 +120,7 @@ const Estoque = () => {
       </header>
        
       <main className="product-entry-main p-6">
-        <div className="product-entry-search flex mb-6">
-          <input type="text" placeholder="Entrada" className="input-search w-full" />
-          <button className="btn btn-search ml-4">
-            <FaSearch />
-          </button>
-        </div>
+        
 
         <div className="product-entry-details mt-8">
           <h3 className="text-lg mb-4">Data da Movimentação</h3>

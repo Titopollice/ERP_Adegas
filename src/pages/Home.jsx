@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   FaBox,
   FaUsers,
@@ -12,39 +12,55 @@ import {
   FaFileInvoice,
   FaFileInvoiceDollar,
   FaCashRegister,
+  FaArrowLeft,
 } from "react-icons/fa";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import "./Home.css";
 import avatarImage from "../assets/avatarImage.jpg"; // Importa a imagem
 
 const Home = () => {
+  const navigate = useNavigate();
   const [currentSection, setCurrentSection] = useState("cadastros");
   const [isOpen, setIsOpen] = useState(false);
   const [userName, setUserName] = useState(""); // Estado para o nome do usuário
+  const [userId, setUserId] = useState(null);
 
   // Pega o nome do usuário do localStorage quando o componente monta
   useEffect(() => {
     const loggedInUser = localStorage.getItem("userName"); // Pega do localStorage
+    const loggedInUserId = localStorage.getItem("userId");
     if (loggedInUser) {
       setUserName(loggedInUser); // Define o nome do usuário no estado
     }
+    if (loggedInUserId) {
+      setUserId(parseInt(loggedInUserId, 10));
+    }
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest("#dropdownButton")) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
   }, []);
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleClickOutside = (event) => {
-    if (!event.target.closest("#dropdownButton")) {
-      setIsOpen(false);
-    }
+  const handleLogout = () => {
+    localStorage.removeItem("userName");
+    localStorage.removeItem("userId");
+    navigate("/");
+    toast.success("Logout realizado com sucesso!");
   };
-
-  React.useEffect(() => {
-    window.addEventListener("click", handleClickOutside);
-    return () => {
-      window.removeEventListener("click", handleClickOutside);
-    };
-  }, []);
 
   const renderIcons = () => {
     const iconClassName =
@@ -58,10 +74,12 @@ const Home = () => {
               <FaBox className="text-7xl" />
               <span className="text-xl">Produtos</span>
             </Link>
-            <Link to="/usuario" className={iconClassName}>
-              <FaUsers className="text-7xl" />
-              <span className="text-xl">Usuários</span>
-            </Link>
+            {userId === 0 && (
+              <Link to="/usuario" className={iconClassName}>
+                <FaUsers className="text-7xl" />
+                <span className="text-xl">Usuários</span>
+              </Link>
+            )}
             <Link to="/fornecedor" className={iconClassName}>
               <FaStore className="text-7xl" />
               <span className="text-xl">Fornecedor</span>
@@ -121,53 +139,54 @@ const Home = () => {
 
   return (
     <div className="home-container h-screen w-screen text-white">
+      <ToastContainer />
       <header className="home-header flex justify-between items-center p-6 mb-8">
         <h1 className="text-4xl font-bold">Adegas SGE</h1>
-        <div className="relative inline-block text-left">
-          <button
-            id="dropdownButton"
-            onClick={toggleDropdown}
-            type="button"
-            className="inline-flex items-center space-x-2 bg- text-sm font-medium text-white-700 px-4 py-2 border border-gray-300 rounded-md border-transparent shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-          >
-            <span className="text-whrite-800">{userName}</span> {/* Removido o bold aqui */}
-            <svg
-              className="h-5 w-5 text-gray-600"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              aria-hidden="true"
+        <div className="flex items-center space-x-4">
+          <div className="relative inline-block text-left">
+            <button
+              id="dropdownButton"
+              onClick={toggleDropdown}
+              type="button"
+              className="inline-flex items-center space-x-2 bg-white text-sm font-medium text-gray-700 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
             >
-              <path
-                fillRule="evenodd"
-                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </button>
+              <span>{userName}</span>
+              <svg
+                className="h-5 w-5 text-gray-400"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </button>
 
-          {isOpen && (
-            <div
-              className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
-              role="menu"
-              aria-orientation="vertical"
-              aria-labelledby="menu-button"
-              tabIndex="-1"
-            >
-              <div className="py-1" role="none">
-                <a
-                  href="/"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  role="menuitem"
-                  onClick={() => {
-                    localStorage.removeItem("userName"); // Remove o nome do usuário do localStorage
-                  }}
-                >
-                  Sair
-                </a>
+            {isOpen && (
+              <div
+                className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+                role="menu"
+                aria-orientation="vertical"
+                aria-labelledby="menu-button"
+                tabIndex="-1"
+              >
+                <div className="py-1" role="none">
+                  <a
+                    href="#"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    role="menuitem"
+                    onClick={handleLogout}
+                  >
+                    Sair
+                  </a>
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </header>
 

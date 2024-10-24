@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaArrowLeft, FaSearch, FaPlus, FaTrash, FaEdit } from "react-icons/fa";
+import { FaArrowLeft, FaSearch, FaPlus, FaTrash, FaEdit, FaBroom } from "react-icons/fa";
 import axios from "axios";
 import InputMask from "react-input-mask";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import "./Fornecedor.css";
 
 const Fornecedor = () => {
@@ -20,47 +22,47 @@ const Fornecedor = () => {
   const [selectedFornecedorId, setSelectedFornecedorId] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [userName, setUserName] = useState(""); 
+  const [fieldsDisabled, setFieldsDisabled] = useState(true);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:8080/api/fornecedor")
-      .then((response) => {
-        setFornecedores(response.data);
-      })
-      .catch((error) => {
-        console.error("Erro ao buscar fornecedores:", error);
-      });
-      const loggedInUser = localStorage.getItem("userName"); // Pega do localStorage
+    buscarFornecedores();
+    const loggedInUser = localStorage.getItem("userName");
     if (loggedInUser) {
-      setUserName(loggedInUser); // Define o nome do usuário no estado
+      setUserName(loggedInUser);
     }
   }, []);
 
   const buscarFornecedores = () => {
     if (searchTerm.trim() === "") {
-      // Se o campo de pesquisa estiver vazio, busque todos os produtos
       axios
         .get("http://localhost:8080/api/fornecedor")
         .then((response) => {
           setFornecedores(response.data);
         })
         .catch((error) => {
-          console.error("Erro ao buscar fornecedor:", error);
+          console.error("Erro ao buscar fornecedores:", error);
+          toast.error('Erro ao buscar fornecedores. Por favor, tente novamente.');
         });
     } else {
-      // Se houver termo de pesquisa, busque por nome
       axios
         .get(`http://localhost:8080/api/fornecedor/nome/${searchTerm}`)
         .then((response) => {
           setFornecedores(response.data);
+          toast.success(`Busca por "${searchTerm}" concluída.`);
         })
         .catch((error) => {
           console.error("Erro ao buscar fornecedor pelo nome:", error);
+          toast.error('Erro ao buscar fornecedores. Por favor, tente novamente.');
         });
     }
   };
 
   const adicionarFornecedor = () => {
+    if (!nome || !cnpj || !razao || !numero || !bairro || !telefone || !email) {
+      toast.error("Por favor, preencha todos os campos obrigatórios.");
+      return;
+    }
+
     const novoFornecedor = {
       nome,
       cnpj,
@@ -70,17 +72,19 @@ const Fornecedor = () => {
       telefone,
       complemento,
       email,
+      status: 'Ativo'
     };
 
     axios
       .post("http://localhost:8080/api/fornecedor", novoFornecedor)
-      .then((response) => {
-        setFornecedores([...fornecedores, response.data]);
+      .then(() => {
         buscarFornecedores();
         limparCampos();
+        toast.success('Fornecedor adicionado com sucesso!');
       })
       .catch((error) => {
         console.error("Erro ao adicionar fornecedor:", error);
+        toast.error('Erro ao adicionar fornecedor. Por favor, tente novamente.');
       });
   };
 
@@ -98,34 +102,37 @@ const Fornecedor = () => {
 
     axios
       .put(`http://localhost:8080/api/fornecedor/${selectedFornecedorId}`, fornecedorAtualizado)
-      .then((response) => {
-        setFornecedores(
-          fornecedores.map((fornecedor) =>
-            fornecedor.fornecedorID === selectedFornecedorId ? response.data : fornecedor
-          )
-        );
+      .then(() => {
         buscarFornecedores();
         limparCampos();
         setIsEditing(false);
+        setFieldsDisabled(true);
+        toast.success('Fornecedor atualizado com sucesso!');
       })
       .catch((error) => {
         console.error("Erro ao atualizar fornecedor:", error);
+        toast.error('Erro ao atualizar fornecedor. Por favor, tente novamente.');
       });
   };
 
-  const excluirFornecedor = (id) => {
+  const excluirFornecedor = (id, statusAtual) => {
+    const novoStatus = statusAtual === 'Ativo' ? 'Inativo' : 'Ativo';
+
     axios
-      .patch(`http://localhost:8080/api/fornecedor/${id}`)
+      .patch(`http://localhost:8080/api/fornecedor/${id}`, { status: novoStatus })
       .then(() => {
         setFornecedores((prevFornecedores) =>
           prevFornecedores.map((fornecedor) =>
-            fornecedor.fornecedorID === id ? { ...fornecedor, status: fornecedor.status === 'Ativo' ? 'Inativo' : 'Ativo' } : fornecedor
+            fornecedor.fornecedorID === id ? { ...fornecedor, status: novoStatus } : fornecedor
           )
         );
         buscarFornecedores();
+        const mensagem = novoStatus === 'Inativo' ? "Fornecedor inativado!" : "Fornecedor ativado!";
+        toast.success(mensagem);
       })
       .catch((error) => {
         console.error("Erro ao alterar o status do fornecedor:", error);
+        toast.error('Erro ao alterar o status do fornecedor. Por favor, tente novamente.');
       });
   };
 
@@ -140,6 +147,7 @@ const Fornecedor = () => {
     setComplemento(fornecedor.complemento);
     setEmail(fornecedor.email);
     setIsEditing(true);
+    setFieldsDisabled(false);
   };
 
   const limparCampos = () => {
@@ -153,20 +161,18 @@ const Fornecedor = () => {
     setEmail("");
     setSelectedFornecedorId(null);
     setIsEditing(false);
+    setFieldsDisabled(true);
   };
 
   return (
     <div className="suppliers-container">
+      <ToastContainer />
       <header className="suppliers-header flex justify-between items-center p-6">
-        <h1 className="text-xl font-bold">Administração de Fornecedores</h1>
+        <h1 className="text-xl font-bold">Fornecedores</h1>
         <div className="flex items-center space-x-4">
-        <span className="text-whrite-800">{userName}</span> 
+          <span className="text-white-800">{userName}</span> 
           <div className="flex items-center space-x-2">
-            <FaArrowLeft
-              onClick={() => navigate(-1)}
-              className="text-lg cursor-pointer"
-              title="Voltar"
-            />
+            <FaArrowLeft onClick={() => navigate(-1)} className="text-lg cursor-pointer" title="Voltar" />
           </div>
         </div>
       </header>
@@ -176,35 +182,21 @@ const Fornecedor = () => {
           <h2 className="text-lg">Fornecedores</h2>
         </div>
         <div className="flex items-center space-x-4">
-          <button
-            className="btn btn-add flex items-center"
-            onClick={adicionarFornecedor}
-            disabled={isEditing}
-          >
+          <button className="btn btn-add flex items-center" onClick={() => { setFieldsDisabled(false); }} disabled={isEditing}>
             <FaPlus className="mr-2" />
             Adicionar
           </button>
-          <button className="btn btn-back" onClick={() => navigate(-1)}>
-            Voltar
-          </button>
+          <button className="btn btn-back" onClick={() => navigate(-1)}>Voltar</button>
         </div>
       </div>
 
       <main className="suppliers-main p-6">
         <div className="suppliers-search flex mb-6">
-          <input
-            type="text"
-            placeholder="Fornecedores"
-            className="input-search w-full"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <button className="btn btn-search ml-4" onClick={buscarFornecedores}>
-            <FaSearch />
-          </button>
+          <input type="text" placeholder="Fornecedor" className="input-search w-full" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+          <button className="btn btn-search ml-4" onClick={buscarFornecedores}>Buscar</button>
         </div>
 
-        <div className="suppliers-table overflow-auto mb-6" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+        <div className="suppliers-table overflow-auto">
           <table className="w-full border-collapse">
             <thead>
               <tr>
@@ -226,18 +218,11 @@ const Fornecedor = () => {
                     <td className="border p-2 text-center">{fornecedor.razao}</td>
                     <td className="border p-2 text-center">{fornecedor.status}</td>
                     <td className="border p-2 text-center flex justify-center">
-                      <button
-                        className="btn btn-edit flex items-center mr-2"
-                        style={{ backgroundColor: "yellow" }}
-                        onClick={() => editarFornecedor(fornecedor)}
-                      >
+                      <button className="btn btn-edit flex items-center mr-2" onClick={() => editarFornecedor(fornecedor)}>
                         <FaEdit className="mr-2" />
                         Editar
                       </button>
-                      <button
-                        className="btn btn-delete flex items-center"
-                        onClick={() => excluirFornecedor(fornecedor.fornecedorID)}
-                      >
+                      <button className="btn btn-delete flex items-center" onClick={() => excluirFornecedor(fornecedor.fornecedorID, fornecedor.status)}>
                         <FaTrash className="mr-2" />
                         {fornecedor.status === 'Ativo' ? 'Inativar' : 'Ativar'}
                       </button>
@@ -246,9 +231,7 @@ const Fornecedor = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="6" className="border p-2 text-center">
-                    Nenhum fornecedor encontrado.
-                  </td>
+                  <td colSpan="6" className="text-center p-4">Nenhum fornecedor encontrado</td>
                 </tr>
               )}
             </tbody>
@@ -256,13 +239,14 @@ const Fornecedor = () => {
         </div>
 
         <div className="suppliers-details mt-8">
-          <h3 className="text-lg mb-4">Dados do Fornecedor</h3>
+          <h3 className="text-lg mb-4">Detalhes do Fornecedor</h3>
           <input
             type="text"
             placeholder="Nome Fantasia"
             className="input-detail mb-4 w-full"
             value={nome}
             onChange={(e) => setNome(e.target.value)}
+            disabled={fieldsDisabled}
           />
           <div className="grid grid-cols-2 gap-4">
             <InputMask
@@ -271,6 +255,7 @@ const Fornecedor = () => {
               className="input-detail"
               value={cnpj}
               onChange={(e) => setCnpj(e.target.value)}
+              disabled={fieldsDisabled}
             />
             <input
               type="text"
@@ -278,6 +263,7 @@ const Fornecedor = () => {
               className="input-detail"
               value={razao}
               onChange={(e) => setRazao(e.target.value)}
+              disabled={fieldsDisabled}
             />
             <input
               type="text"
@@ -285,6 +271,7 @@ const Fornecedor = () => {
               className="input-detail"
               value={numero}
               onChange={(e) => setNumero(e.target.value)}
+              disabled={fieldsDisabled}
             />
             <input
               type="text"
@@ -292,6 +279,7 @@ const Fornecedor = () => {
               className="input-detail"
               value={bairro}
               onChange={(e) => setBairro(e.target.value)}
+              disabled={fieldsDisabled}
             />
             <InputMask
               mask="(99) 99999-9999"
@@ -299,6 +287,7 @@ const Fornecedor = () => {
               className="input-detail"
               value={telefone}
               onChange={(e) => setTelefone(e.target.value)}
+              disabled={fieldsDisabled}
             />
             <input
               type="text"
@@ -306,6 +295,7 @@ const Fornecedor = () => {
               className="input-detail"
               value={complemento}
               onChange={(e) => setComplemento(e.target.value)}
+              disabled={fieldsDisabled}
             />
             <input
               type="email"
@@ -313,35 +303,34 @@ const Fornecedor = () => {
               className="input-detail"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              disabled={fieldsDisabled}
             />
           </div>
+        </div>
 
-          <div className="suppliers-actions mt-8 flex justify-between">
+        <div className="suppliers-actions mt-4 flex justify-between items-center">
+          <div>
             {isEditing ? (
-              <>
-                <button
-                  className="btn btn-update"
-                  onClick={atualizarFornecedor}
-                >
-                  Atualizar
-                </button>
-                <button
-                  className="btn btn-clear flex items-center"
-                  onClick={limparCampos}
-                >
-                  <FaTrash className="mr-2" />
-                  Limpar
-                </button>
-              </>
+              <button className="btn btn-save" onClick={atualizarFornecedor}>
+                Salvar Alterações
+              </button>
             ) : (
-              <button
-                className="btn btn-save"
+              <button 
+                className="btn btn-save" 
                 onClick={adicionarFornecedor}
+                disabled={fieldsDisabled}
               >
                 Salvar
               </button>
             )}
           </div>
+          <button 
+            className="btn btn-clear flex items-center" 
+            onClick={limparCampos}
+          >
+            <FaBroom className="mr-2" />
+            Limpar
+          </button>
         </div>
       </main>
     </div>

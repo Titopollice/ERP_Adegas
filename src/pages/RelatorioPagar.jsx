@@ -3,6 +3,9 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './RelatorioPagar.css'; // Importação do CSS para estilos específicos
 
+const apiURL = import.meta.env.VITE_APP_URL_BACKEND;
+
+
 const RelatorioPagar = () => {
   const navigate = useNavigate();
   const [startDate, setStartDate] = useState('');
@@ -21,7 +24,7 @@ const RelatorioPagar = () => {
       status
     }).toString();
 
-    fetch(`http://localhost:8080/api/relatorio/gerarRelatorioPagar?${params}`)
+    fetch(`${apiURL}/api/relatorio/gerarRelatorioPagar?${params}`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Falha ao gerar relatório');

@@ -5,6 +5,8 @@ import { toast, ToastContainer } from 'react-toastify'; // Importa os componente
 import 'react-toastify/dist/ReactToastify.css';
 import './ContasReceber.css';
 
+const apiURL = import.meta.env.VITE_APP_URL_BACKEND;
+
 const ContasReceber = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('conta'); // Aba ativa
@@ -29,7 +31,7 @@ const ContasReceber = () => {
 
   const fetchContas = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/receber');
+      const response = await fetch(`${apiURL}/api/receber`);
       const data = await response.json();
       // Ordena as contas por ID
       const contasOrdenadas = data.sort((a, b) => a.contaID - b.contaID);
@@ -81,7 +83,7 @@ const ContasReceber = () => {
       };
 
       // Salvando a conta a pagar com as parcelas
-      const respostaConta = await fetch('http://localhost:8080/api/receber', {
+      const respostaConta = await fetch(`${apiURL}/api/receber`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(contaPagar),
@@ -118,7 +120,7 @@ const ContasReceber = () => {
   const handleDelete = async (contaID) => {
     if (window.confirm("Tem certeza que deseja excluir essa conta?")) {
       try {
-        await fetch(`http://localhost:8080/api/receber/${contaID}`, {
+        await fetch(`${apiURL}/api/receber/${contaID}`, {
           method: 'DELETE',
         });
         toast.success("Conta excluída com sucesso!");
@@ -138,7 +140,7 @@ const ContasReceber = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:8080/api/receber/parcelas/${parcelaID}/status`, {
+      const response = await fetch(`${apiURL}/api/receber/parcelas/${parcelaID}/status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -183,7 +185,7 @@ const ContasReceber = () => {
   // Função para dar baixa e buscar as parcelas vinculadas
   const handleBaixa = async (contaID) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/receber/${contaID}/parcelas`);
+      const response = await fetch(`${apiURL}/api/receber/${contaID}/parcelas`);
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -207,7 +209,7 @@ const ContasReceber = () => {
 
   const atualizarStatusConta = async (contaID, novoStatus) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/receber/${contaID}`, {
+      const response = await fetch(`${apiURL}/api/receber/${contaID}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

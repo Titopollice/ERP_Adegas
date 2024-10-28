@@ -5,6 +5,8 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './Estoque.css'; // Importação do CSS padrão para estilos
 
+const apiURL = import.meta.env.VITE_APP_URL_BACKEND;
+
 const Estoque = () => {
   const navigate = useNavigate();
 
@@ -18,7 +20,7 @@ const Estoque = () => {
   // Função para buscar fornecedores e produtos na API
   useEffect(() => {
     const fetchFornecedores = async () => {
-      const response = await fetch('http://localhost:8080/api/fornecedor');
+      const response = await fetch(`${apiURL}/api/fornecedor`);
       const data = await response.json();
       setFornecedores(data);
       const loggedInUser = localStorage.getItem("userName"); // Pega do localStorage
@@ -28,7 +30,7 @@ const Estoque = () => {
     };
 
     const fetchProdutos = async () => {
-      const response = await fetch('http://localhost:8080/api/produto'); // Endpoint para buscar produtos
+      const response = await fetch(`${apiURL}/api/produto`); // Endpoint para buscar produtos
       const data = await response.json();
       setProdutos(data);
     };
@@ -81,7 +83,7 @@ const Estoque = () => {
       };
 
       try {
-        const response = await fetch('http://localhost:8080/api/estoque', {
+        const response = await fetch(`${apiURL}/api/estoque`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)

@@ -6,6 +6,9 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './Vendas.css';
 
+const apiURL = import.meta.env.VITE_APP_URL_BACKEND;
+
+
 const Vendas = () => {
   const navigate = useNavigate();
   const [barcode, setBarcode] = useState('');
@@ -31,7 +34,7 @@ const Vendas = () => {
   
   const handleSearchProduct = async () => {
     try {
-      const response = await axios.get(`http://localhost:8080/api/venda/produto/${barcode}`);
+      const response = await axios.get(`${apiURL}/api/venda/produto/${barcode}`);
       if (response.data) {
         setProduto(response.data);
         const valorUnitario = parseFloat(response.data.preco);
@@ -113,7 +116,7 @@ const Vendas = () => {
     };
   
     try {
-      const response = await axios.post('http://localhost:8080/api/venda/venda', vendaData);
+      const response = await axios.post(`${apiURL}/api/venda/venda`, vendaData);
       console.log('Venda finalizada:', response.data);
       toast.success('Venda finalizada com sucesso!');
       resetForm();

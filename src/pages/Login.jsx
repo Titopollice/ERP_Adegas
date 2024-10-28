@@ -3,6 +3,8 @@ import axios from "axios";
 import ForgotPasswordModal from "./ForgotPasswordModal";
 import logo from "../assets/logo.jpg"; // Atualize o caminho da imagem conforme necessário
 
+const apiURL = import.meta.env.VITE_APP_URL_BACKEND;
+
 const Login = () => {
   const [usuarioLogin, setUsuarioLogin] = useState("");
   const [senha, setSenha] = useState("");
@@ -23,7 +25,7 @@ const Login = () => {
     
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/usuario/login",
+        `${apiURL}/api/usuario/login`,
         { usuarioLogin, senha }
       );
       const { token, nomeUsuario } = response.data;

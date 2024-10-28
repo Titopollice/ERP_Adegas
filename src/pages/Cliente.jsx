@@ -7,6 +7,9 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import "./Cliente.css";
 
+
+const apiURL = import.meta.env.VITE_APP_URL_BACKEND;
+
 const Cliente = () => {
   const navigate = useNavigate();
   const [clientes, setClientes] = useState([]);
@@ -25,7 +28,7 @@ const Cliente = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8080/api/cliente")
+      .get(`${apiURL}/api/cliente`)
       .then((response) => {
         setClientes(response.data);
       })
@@ -41,7 +44,7 @@ const Cliente = () => {
   const buscarClientes = () => {
     if (searchTerm.trim() === "") {
       axios
-        .get("http://localhost:8080/api/cliente")
+        .get(`${apiURL}/api/cliente`)
         .then((response) => {
           setClientes(response.data);
         })
@@ -50,7 +53,7 @@ const Cliente = () => {
         });
     } else {
       axios
-        .get(`http://localhost:8080/api/cliente/nome/${searchTerm}`)
+        .get(`${apiURL}/api/cliente/nome/${searchTerm}`)
         .then((response) => {
           setClientes(response.data);
         })
@@ -78,7 +81,7 @@ const Cliente = () => {
     };
   
     axios
-      .post("http://localhost:8080/api/cliente", novoCliente)
+      .post(`${apiURL}/api/cliente`, novoCliente)
       .then((response) => {
         setClientes([...clientes, response.data]);
         buscarClientes();
@@ -104,7 +107,7 @@ const Cliente = () => {
     };
 
     axios
-      .put(`http://localhost:8080/api/cliente/${selectedClienteId}`, clienteAtualizado)
+      .put(`${apiURL}/api/cliente/${selectedClienteId}`, clienteAtualizado)
       .then((response) => {
         setClientes(
           clientes.map((cliente) =>
@@ -125,7 +128,7 @@ const Cliente = () => {
 
   const excluirCliente = (id) => {
     axios
-      .patch(`http://localhost:8080/api/cliente/${id}`)
+      .patch(`${apiURL}/api/cliente/${id}`)
       .then(() => {
         setClientes((prevClientes) =>
           prevClientes.map((cliente) =>

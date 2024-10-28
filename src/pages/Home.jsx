@@ -19,6 +19,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import "./Home.css";
 import avatarImage from "../assets/avatarImage.jpg"; // Importa a imagem
 
+const apiURL = import.meta.env.VITE_APP_URL_BACKEND;
+
 const Home = () => {
   const navigate = useNavigate();
   const [currentSection, setCurrentSection] = useState("cadastros");

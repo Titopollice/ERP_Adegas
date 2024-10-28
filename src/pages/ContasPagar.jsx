@@ -5,6 +5,8 @@ import { toast, ToastContainer } from 'react-toastify'; // Importa os componente
 import 'react-toastify/dist/ReactToastify.css';
 import './ContasPagar.css';
 
+const apiURL = import.meta.env.VITE_APP_URL_BACKEND;
+
 const ContasPagar = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('conta'); // Aba ativa
@@ -29,7 +31,7 @@ const ContasPagar = () => {
 
   const fetchContas = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/contas');
+      const response = await fetch(`${apiURL}/api/contas`);
       const data = await response.json();
       console.log('Contas atualizadas:', data); // Log para debug
       setContas(data);
@@ -80,7 +82,7 @@ const ContasPagar = () => {
       };
 
       // Salvando a conta a pagar com as parcelas
-      const respostaConta = await fetch('http://localhost:8080/api/contas', {
+      const respostaConta = await fetch(`${apiURL}/api/contas`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(contaPagar),
@@ -115,7 +117,7 @@ const ContasPagar = () => {
   const handleDelete = async (contaID) => {
     if (window.confirm("Tem certeza que deseja excluir essa conta?")) {
       try {
-        await fetch(`http://localhost:8080/api/contas/${contaID}`, {
+        await fetch(`${apiURL}/api/contas/${contaID}`, {
           method: 'DELETE',
         });
         toast.success("Conta excluída com sucesso!");
@@ -129,7 +131,7 @@ const ContasPagar = () => {
 
   const handleBaixaParcela = async (parcelaID, contaID) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/contas/parcelas/${parcelaID}/status`, {
+      const response = await fetch(`${apiURL}/api/contas/parcelas/${parcelaID}/status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -174,8 +176,7 @@ const ContasPagar = () => {
   // Função para dar baixa e buscar as parcelas vinculadas
   const handleBaixa = async (contaID) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/contas/${contaID}/parcelas`);
-
+      const response = await fetch(`${apiURL}/api/contas/${contaID}/parcelas`);
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(`Erro ao buscar parcelas da conta: ${errorText}`);
@@ -194,7 +195,7 @@ const ContasPagar = () => {
 
   const atualizarStatusConta = async (contaID, novoStatus) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/contas/${contaID}`, {
+      const response = await fetch(`${apiURL}/api/contas/${contaID}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

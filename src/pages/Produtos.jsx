@@ -7,6 +7,8 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; // Importação do CSS do react-toastify
 import './Produtos.css'; // Importação do CSS padrão
 
+const apiURL = import.meta.env.VITE_APP_URL_BACKEND;
+
 const Produtos = () => {
   const navigate = useNavigate();
   const [produtos, setProdutos] = useState([]);
@@ -36,7 +38,7 @@ const Produtos = () => {
   const buscarProdutos = () => {
     if (searchTerm.trim() === "") {
       axios
-        .get("http://localhost:8080/api/produto")
+        .get(`${apiURL}/api/produto`)
         .then((response) => {
           setProdutos(response.data);
         })
@@ -45,7 +47,7 @@ const Produtos = () => {
         });
     } else {
       axios
-        .get(`http://localhost:8080/api/produto/nome/${searchTerm}`)
+        .get(`${apiURL}/api/produto/api/produto/nome/${searchTerm}`)
         .then((response) => {
           setProdutos(response.data);
         })
@@ -75,7 +77,7 @@ const Produtos = () => {
     };
 
     axios
-      .post("http://localhost:8080/api/produto", novoProduto)
+      .post(`${apiURL}/api/produto/api/produto`, novoProduto)
       .then(() => {
         buscarProdutos();
         limparCampos();
@@ -101,7 +103,7 @@ const Produtos = () => {
     };
 
     axios
-      .put(`http://localhost:8080/api/produto/${selectedProductId}`, produtoAtualizado)
+      .put(`${apiURL}/api/produto/api/produto/${selectedProductId}`, produtoAtualizado)
       .then(() => {
         buscarProdutos();
         limparCampos();
@@ -119,7 +121,7 @@ const Produtos = () => {
     const novoStatus = statusAtual === 'Ativo' ? 'Inativo' : 'Ativo';
 
     axios
-      .patch(`http://localhost:8080/api/produto/${id}`, { status: novoStatus })
+      .patch(`${apiURL}/api/produto/api/produto/${id}`, { status: novoStatus })
       .then(() => {
         setProdutos((prevProdutos) =>
           prevProdutos.map((produto) =>

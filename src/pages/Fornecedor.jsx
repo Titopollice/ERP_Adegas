@@ -7,6 +7,8 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import "./Fornecedor.css";
 
+const apiURL = import.meta.env.VITE_APP_URL_BACKEND;
+
 const Fornecedor = () => {
   const navigate = useNavigate();
   const [fornecedores, setFornecedores] = useState([]);
@@ -35,7 +37,7 @@ const Fornecedor = () => {
   const buscarFornecedores = () => {
     if (searchTerm.trim() === "") {
       axios
-        .get("http://localhost:8080/api/fornecedor")
+        .get(`${apiURL}/api/fornecedor`)
         .then((response) => {
           setFornecedores(response.data);
         })
@@ -45,7 +47,7 @@ const Fornecedor = () => {
         });
     } else {
       axios
-        .get(`http://localhost:8080/api/fornecedor/nome/${searchTerm}`)
+        .get(`${apiURL}/api/fornecedor/nome/${searchTerm}`)
         .then((response) => {
           setFornecedores(response.data);
           toast.success(`Busca por "${searchTerm}" concluída.`);
@@ -76,7 +78,7 @@ const Fornecedor = () => {
     };
 
     axios
-      .post("http://localhost:8080/api/fornecedor", novoFornecedor)
+      .post(`${apiURL}/api/fornecedor`, novoFornecedor)
       .then(() => {
         buscarFornecedores();
         limparCampos();
@@ -101,7 +103,7 @@ const Fornecedor = () => {
     };
 
     axios
-      .put(`http://localhost:8080/api/fornecedor/${selectedFornecedorId}`, fornecedorAtualizado)
+      .put(`${apiURL}/api/fornecedor/${selectedFornecedorId}`, fornecedorAtualizado)
       .then(() => {
         buscarFornecedores();
         limparCampos();
@@ -119,7 +121,7 @@ const Fornecedor = () => {
     const novoStatus = statusAtual === 'Ativo' ? 'Inativo' : 'Ativo';
 
     axios
-      .patch(`http://localhost:8080/api/fornecedor/${id}`, { status: novoStatus })
+      .patch(`${apiURL}/api/fornecedor/${id}`, { status: novoStatus })
       .then(() => {
         setFornecedores((prevFornecedores) =>
           prevFornecedores.map((fornecedor) =>

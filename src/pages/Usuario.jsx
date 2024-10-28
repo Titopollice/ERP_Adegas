@@ -7,6 +7,9 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import "./Usuario.css";
 
+const apiURL = import.meta.env.VITE_APP_URL_BACKEND;
+
+
 const Usuario = () => {
   const navigate = useNavigate();
   const [usuarios, setUsuarios] = useState([]);
@@ -26,7 +29,7 @@ const Usuario = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8080/api/usuario")
+      .get(`${apiURL}/api/usuario`)
       .then((response) => {
         setUsuarios(response.data);
       })
@@ -42,23 +45,23 @@ const Usuario = () => {
   const buscarUsuarios = () => {
     if (searchTerm.trim() === "") {
       axios
-        .get("http://localhost:8080/api/usuario")
+        .get(`${apiURL}/api/usuario`)
         .then((response) => {
           setUsuarios(response.data);
         })
         .catch((error) => {
-          console.error("Erro ao buscar fornecedor:", error);
+          console.error("Erro ao buscar usuario:", error);
         });
     } else {
       // Se houver termo de pesquisa, busque por nome
       axios
-        .get(`http://localhost:8080/api/usuario/nome/${searchTerm}`)
+        .get(`${apiURL}/api/usuario/nome/${searchTerm}`)
         .then((response) => {
           setUsuarios(response.data);
         })
         .catch((error) => {
           toast.error("Usuario inexsitente!");
-          console.error("Erro ao buscar fornecedor pelo nome:", error);
+          console.error("Erro ao buscar usuario pelo nome:", error);
         });
     }
   };
@@ -87,50 +90,39 @@ const Usuario = () => {
 
   const adicionarUsuario = () => {
     setIsFieldsDisabled(false);
-
+  
     if (!usuarioLogin || !nomeCompleto || !email || !telefone || !cpf || !cargo || !dataNascimento || !senha) {
       toast.error("Por favor, preencha todos os campos.");
       return;
     }
-
-    // Primeiro, verificamos se já existe um usuário com o mesmo nome
-    axios.get(`http://localhost:8080/api/usuario/nome/${nomeCompleto}`)
+  
+    // Criando o objeto do novo usuário
+    const novoUsuario = {
+      usuarioLogin,
+      nomeCompleto,
+      email,
+      telefone,
+      cpf,
+      cargo,
+      dataNascimento: formatarData(dataNascimento),
+      senha,
+    };
+  
+    // Fazendo a requisição para adicionar o usuário
+    axios.post(`${apiURL}/api/usuario`, novoUsuario)
       .then((response) => {
-        if (response.data.length > 0) {
-          // Se encontrou algum usuário, mostra a mensagem de erro
-          toast.error("Já existe um usuário com este nome. Por favor, escolha outro nome.");
-        } else {
-          // Se não encontrou, prossegue com o cadastro
-          const novoUsuario = {
-            usuarioLogin,
-            nomeCompleto,
-            email,
-            telefone,
-            cpf,
-            cargo,
-            dataNascimento: formatarData(dataNascimento),
-            senha,
-          };
-
-          axios.post("http://localhost:8080/api/usuario", novoUsuario)
-            .then((response) => {
-              setUsuarios([...usuarios, response.data]);
-              buscarUsuarios();
-              limparCampos();
-              setIsFieldsDisabled(true);
-              toast.success("Usuário adicionado com sucesso!");
-            })
-            .catch((error) => {
-              console.error("Erro ao adicionar usuário:", error);
-              toast.error("Erro ao adicionar usuário. Por favor, tente novamente.");
-            });
-        }
+        setUsuarios([...usuarios, response.data]);
+        buscarUsuarios();
+        limparCampos();
+        setIsFieldsDisabled(true);
+        toast.success("Usuário adicionado com sucesso!");
       })
       .catch((error) => {
-        console.error("Erro ao verificar usuário existente:", error);
-        toast.error("Erro ao verificar usuário existente. Por favor, tente novamente.");
+        console.error("Erro ao adicionar usuário:", error);
+        toast.error("Erro ao adicionar usuário. Por favor, tente novamente.");
       });
   };
+  
 
   const atualizarUsuario = () => {
     const usuarioAtualizado = {
@@ -145,7 +137,7 @@ const Usuario = () => {
     };
 
     axios
-      .put(`http://localhost:8080/api/usuario/${selectedUserId}`, usuarioAtualizado)
+      .put(`${apiURL}/api/usuario/${selectedUserId}`, usuarioAtualizado)
       .then((response) => {
         setUsuarios(
           usuarios.map((usuario) =>
@@ -166,7 +158,7 @@ const Usuario = () => {
 
   const excluirUsuario = (id) => {
     axios
-      .patch(`http://localhost:8080/api/usuario/${id}`)
+      .patch(`${apiURL}/api/usuario/${id}`)
       .then(() => {
         // Atualiza a lista de usuários para refletir a mudança de status.
         setUsuarios((prevUsuarios) =>

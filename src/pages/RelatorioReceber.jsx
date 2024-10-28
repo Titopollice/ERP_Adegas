@@ -3,6 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './RelatorioReceber.css'; // Importação do CSS para estilos específicos
 
+const apiURL = import.meta.env.VITE_APP_URL_BACKEND;
+
+
 const RelatorioReceber = () => {
   const navigate = useNavigate();
   const [startDate, setStartDate] = useState('');
@@ -21,7 +24,7 @@ const RelatorioReceber = () => {
       status
     }).toString();
 
-    fetch(`http://localhost:8080/api/relatorio/gerarRelatorioReceber?${params}`)
+    fetch(`${apiURL}/api/relatorio/gerarRelatorioReceber?${params}`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Falha ao gerar relatório');

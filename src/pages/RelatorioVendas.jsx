@@ -3,6 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './RelatorioVendas.css';
 
+const apiURL = import.meta.env.VITE_APP_URL_BACKEND;
+
+
 const RelatorioVendas = () => {
   const navigate = useNavigate();
   const [startDate, setStartDate] = useState('');
@@ -14,7 +17,7 @@ const RelatorioVendas = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch('http://localhost:8080/api/usuario')
+    fetch(`${apiURL}/api/usuario`)
       .then(response => response.json())
       .then(data => setUsers(data))
       .catch(error => console.error('Erro ao buscar funcionários:', error));
@@ -31,7 +34,7 @@ const RelatorioVendas = () => {
 
     console.log('Parâmetros enviados:', params);
 
-    fetch(`http://localhost:8080/api/relatorio/gerarRelatorioVenda?${params}`)
+    fetch(`${apiURL}/api/relatorio/gerarRelatorioVenda?${params}`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Falha ao gerar relatório');

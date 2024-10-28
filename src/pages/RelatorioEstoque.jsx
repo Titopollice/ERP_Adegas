@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './RelatorioEstoque.css'; // Importação do CSS para estilos específicos
 
+const apiURL = import.meta.env.VITE_APP_URL_BACKEND;
+
 const RelatorioEstoque = () => {
   const navigate = useNavigate();
   const [startDate, setStartDate] = useState('');
@@ -14,12 +16,12 @@ const RelatorioEstoque = () => {
 
   // Função para buscar fornecedores e produtos
   useEffect(() => {
-    fetch('http://localhost:8080/api/fornecedor')
+    fetch(`${apiURL}/api/fornecedor`)
       .then(response => response.json())
       .then(data => setSuppliers(data))
       .catch(error => console.error('Erro ao buscar fornecedores:', error));
 
-    fetch('http://localhost:8080/api/produto')
+    fetch(`${apiURL}/api/produto`)
       .then(response => response.json())
       .then(data => setProducts(data))
       .catch(error => console.error('Erro ao buscar produtos:', error));
@@ -33,7 +35,7 @@ const RelatorioEstoque = () => {
       product
     }).toString();
 
-    fetch(`http://localhost:8080/api/relatorio/gerarRelatorio?${params}`)
+    fetch(`${apiURL}/api/relatorio/gerarRelatorio?${params}`)
       .then(response => response.json())
       .then(data => {
         setReport(data); // Armazena o relatório gerado

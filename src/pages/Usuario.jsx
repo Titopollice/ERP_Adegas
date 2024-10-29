@@ -93,42 +93,34 @@ const Usuario = () => {
       return;
     }
 
-    // Primeiro, verificamos se já existe um usuário com o mesmo nome
-    axios.get(`http://localhost:8080/api/usuario/nome/${nomeCompleto}`)
-      .then((response) => {
-        if (response.data.length > 0) {
-          // Se encontrou algum usuário, mostra a mensagem de erro
-          toast.error("Já existe um usuário com este nome. Por favor, escolha outro nome.");
-        } else {
-          // Se não encontrou, prossegue com o cadastro
-          const novoUsuario = {
-            usuarioLogin,
-            nomeCompleto,
-            email,
-            telefone,
-            cpf,
-            cargo,
-            dataNascimento: formatarData(dataNascimento),
-            senha,
-          };
+    // Criar o novo usuário diretamente sem verificação prévia
+    const novoUsuario = {
+      usuarioLogin,
+      nomeCompleto,
+      email,
+      telefone,
+      cpf,
+      cargo,
+      dataNascimento: formatarData(dataNascimento),
+      senha,
+    };
 
-          axios.post("http://localhost:8080/api/usuario", novoUsuario)
-            .then((response) => {
-              setUsuarios([...usuarios, response.data]);
-              buscarUsuarios();
-              limparCampos();
-              setIsFieldsDisabled(true);
-              toast.success("Usuário adicionado com sucesso!");
-            })
-            .catch((error) => {
-              console.error("Erro ao adicionar usuário:", error);
-              toast.error("Erro ao adicionar usuário. Por favor, tente novamente.");
-            });
-        }
+    // Fazer o POST diretamente
+    axios.post("http://localhost:8080/api/usuario", novoUsuario)
+      .then((response) => {
+        setUsuarios([...usuarios, response.data]);
+        buscarUsuarios();
+        limparCampos();
+        setIsFieldsDisabled(true);
+        toast.success("Usuário adicionado com sucesso!");
       })
       .catch((error) => {
-        console.error("Erro ao verificar usuário existente:", error);
-        toast.error("Erro ao verificar usuário existente. Por favor, tente novamente.");
+        if (error.response?.data?.message) {
+          toast.error(error.response.data.message);
+        } else {
+          toast.error("Erro ao adicionar usuário. Por favor, tente novamente.");
+        }
+        console.error("Erro ao adicionar usuário:", error);
       });
   };
 

@@ -3,12 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { FaArrowLeft, FaSearch, FaPlus, FaTrash, FaEdit } from "react-icons/fa";
 import axios from "axios";
 import InputMask from "react-input-mask";
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./Usuario.css";
 
 const apiURL = import.meta.env.VITE_APP_URL_BACKEND;
-
 
 const Usuario = () => {
   const navigate = useNavigate();
@@ -90,8 +89,17 @@ const Usuario = () => {
 
   const adicionarUsuario = () => {
     setIsFieldsDisabled(false);
-  
-    if (!usuarioLogin || !nomeCompleto || !email || !telefone || !cpf || !cargo || !dataNascimento || !senha) {
+
+    if (
+      !usuarioLogin ||
+      !nomeCompleto ||
+      !email ||
+      !telefone ||
+      !cpf ||
+      !cargo ||
+      !dataNascimento ||
+      !senha
+    ) {
       toast.error("Por favor, preencha todos os campos.");
       return;
     }
@@ -109,7 +117,8 @@ const Usuario = () => {
     };
 
     // Fazer o POST diretamente
-    axios.post("http://localhost:8080/api/usuario", novoUsuario)
+    axios
+      .post(`${apiURL}/api/usuario`, novoUsuario)
       .then((response) => {
         setUsuarios([...usuarios, response.data]);
         buscarUsuarios();
@@ -126,7 +135,6 @@ const Usuario = () => {
         console.error("Erro ao adicionar usuário:", error);
       });
   };
-  
 
   const atualizarUsuario = () => {
     const usuarioAtualizado = {
@@ -159,7 +167,6 @@ const Usuario = () => {
       });
   };
 
-
   const excluirUsuario = (id) => {
     axios
       .patch(`${apiURL}/api/usuario/${id}`)
@@ -167,17 +174,22 @@ const Usuario = () => {
         // Atualiza a lista de usuários para refletir a mudança de status.
         setUsuarios((prevUsuarios) =>
           prevUsuarios.map((usuario) =>
-            usuario.id === id ? { ...usuario, status: usuario.status === 'Ativo' ? 'Inativo' : 'Ativo' } : usuario
+            usuario.id === id
+              ? {
+                  ...usuario,
+                  status: usuario.status === "Ativo" ? "Inativo" : "Ativo",
+                }
+              : usuario
           )
         );
-        buscarUsuarios(); 7
+        buscarUsuarios();
+        7;
         toast.success("Status do usuario alterado com sucesso!");
       })
       .catch((error) => {
         console.error("Erro ao alterar o status do usuário:", error);
         toast.error("Erro ao alterar status do cliente.");
       });
-
   };
 
   const editarUsuario = (usuario) => {
@@ -220,8 +232,11 @@ const Usuario = () => {
         <div className="flex items-center space-x-4">
           <span className="text-whrite-800">{userName}</span>
           <div className="flex items-center space-x-2">
-            <FaArrowLeft onClick={() => navigate(-1)} className="text-lg cursor-pointer" title="Voltar" />
-
+            <FaArrowLeft
+              onClick={() => navigate(-1)}
+              className="text-lg cursor-pointer"
+              title="Voltar"
+            />
           </div>
         </div>
       </header>
@@ -259,7 +274,10 @@ const Usuario = () => {
           </button>
         </div>
 
-        <div className="users-table overflow-auto mb-6" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+        <div
+          className="users-table overflow-auto mb-6"
+          style={{ maxHeight: "400px", overflowY: "auto" }}
+        >
           <table className="w-full border-collapse">
             <thead>
               <tr>
@@ -275,9 +293,15 @@ const Usuario = () => {
               {usuarios.length > 0 ? (
                 usuarios.map((usuario) => (
                   <tr key={usuario.id}>
-                    <td className="border p-2 text-center">{usuario.usuarioID}</td>
-                    <td className="border p-2 text-center">{usuario.usuarioLogin}</td>
-                    <td className="border p-2 text-center">{usuario.nomeCompleto}</td>
+                    <td className="border p-2 text-center">
+                      {usuario.usuarioID}
+                    </td>
+                    <td className="border p-2 text-center">
+                      {usuario.usuarioLogin}
+                    </td>
+                    <td className="border p-2 text-center">
+                      {usuario.nomeCompleto}
+                    </td>
                     <td className="border p-2 text-center">{usuario.email}</td>
                     <td className="border p-2 text-center">{usuario.status}</td>
                     <td className="border p-2 text-center flex justify-center">
@@ -294,9 +318,8 @@ const Usuario = () => {
                         onClick={() => excluirUsuario(usuario.usuarioID)}
                       >
                         <FaTrash className="mr-2" />
-                        {usuario.status === 'Ativo' ? 'Inativar' : 'Ativar'}
+                        {usuario.status === "Ativo" ? "Inativar" : "Ativar"}
                       </button>
-
                     </td>
                   </tr>
                 ))
@@ -386,7 +409,10 @@ const Usuario = () => {
                 <button className="btn btn-update" onClick={atualizarUsuario}>
                   Atualizar
                 </button>
-                <button className="btn btn-clear flex items-center" onClick={limparCampos}>
+                <button
+                  className="btn btn-clear flex items-center"
+                  onClick={limparCampos}
+                >
                   <FaTrash className="mr-2" />
                   Limpar
                 </button>

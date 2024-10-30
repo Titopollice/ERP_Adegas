@@ -11,6 +11,8 @@ const ResetPassword = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
+  const apiURL = import.meta.env.VITE_APP_URL_BACKEND;
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -24,10 +26,9 @@ const ResetPassword = () => {
     }
 
     try {
-      await axios.post(
-        `http://localhost:8080/api/usuario/reset-password/${token}`,
-        { newPassword }
-      );
+      await axios.post(`${apiURL}/api/usuario/reset-password/${token}`, {
+        newPassword,
+      });
 
       setMessage("Senha redefinida com sucesso!");
       setTimeout(() => {

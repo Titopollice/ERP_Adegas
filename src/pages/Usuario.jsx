@@ -95,8 +95,8 @@ const Usuario = () => {
       toast.error("Por favor, preencha todos os campos.");
       return;
     }
-  
-    // Criando o objeto do novo usuário
+
+    // Criar o novo usuário diretamente sem verificação prévia
     const novoUsuario = {
       usuarioLogin,
       nomeCompleto,
@@ -107,9 +107,9 @@ const Usuario = () => {
       dataNascimento: formatarData(dataNascimento),
       senha,
     };
-  
-    // Fazendo a requisição para adicionar o usuário
-    axios.post(`${apiURL}/api/usuario`, novoUsuario)
+
+    // Fazer o POST diretamente
+    axios.post("http://localhost:8080/api/usuario", novoUsuario)
       .then((response) => {
         setUsuarios([...usuarios, response.data]);
         buscarUsuarios();
@@ -118,8 +118,12 @@ const Usuario = () => {
         toast.success("Usuário adicionado com sucesso!");
       })
       .catch((error) => {
+        if (error.response?.data?.message) {
+          toast.error(error.response.data.message);
+        } else {
+          toast.error("Erro ao adicionar usuário. Por favor, tente novamente.");
+        }
         console.error("Erro ao adicionar usuário:", error);
-        toast.error("Erro ao adicionar usuário. Por favor, tente novamente.");
       });
   };
   

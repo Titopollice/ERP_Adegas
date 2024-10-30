@@ -77,7 +77,7 @@ const Produtos = () => {
     };
 
     axios
-      .post(`${apiURL}/api/produto/api/produto`, novoProduto)
+      .post(`${apiURL}/api/produto`, novoProduto)
       .then(() => {
         buscarProdutos();
         limparCampos();
@@ -103,7 +103,7 @@ const Produtos = () => {
     };
 
     axios
-      .put(`${apiURL}/api/produto/api/produto/${selectedProductId}`, produtoAtualizado)
+      .put(`${apiURL}/api/produto/${selectedProductId}`, produtoAtualizado)
       .then(() => {
         buscarProdutos();
         limparCampos();
@@ -121,7 +121,7 @@ const Produtos = () => {
     const novoStatus = statusAtual === 'Ativo' ? 'Inativo' : 'Ativo';
 
     axios
-      .patch(`${apiURL}/api/produto/api/produto/${id}`, { status: novoStatus })
+      .patch(`${apiURL}/api/produto/${id}`, { status: novoStatus })
       .then(() => {
         setProdutos((prevProdutos) =>
           prevProdutos.map((produto) =>

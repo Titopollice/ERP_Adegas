@@ -47,7 +47,7 @@ const Produtos = () => {
         });
     } else {
       axios
-        .get(`${apiURL}/api/produto/api/produto/nome/${searchTerm}`)
+        .get(`${apiURL}/api/produto/nome/${searchTerm}`)
         .then((response) => {
           setProdutos(response.data);
         })
